@@ -1,0 +1,25 @@
+24 sept
+#### FIRST ITERATION
+during the following iteration we are going to focus our effort in setup the
+local development system to start the project.
+
+### SETUP
+## Backend
+First we are going to setup the development environment
+we need to create an erlang project with leptus, webmachine *Done
+
+### Database
+choose a database that can fit the requirements of the project:
+if it is going to be relational we would like to try Postgrees
+otherwise some of the followings:
+
+- MongoDb
+- CouchDB
+- Riak
+- Neo4J?
+
+### Client Side
+Setup Gulp.js, coffee script, angular.js, bootstrap and similars
+
+### Change Management
+Setup bit bucket *Done

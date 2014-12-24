@@ -1,0 +1,10 @@
+start application:
+erl -pa ebin deps/*/ebin
+
+-compile without deps
+rebar compile skip_deps=true
+
+
+curl -vX POST http://127.0.0.1:8080/word \
+-H"Content-Type:application/json" \
+-d'{ "name": "camilin", "definition": "pajarito nuevo","status":"low" }'

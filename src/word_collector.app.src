@@ -1,0 +1,17 @@
+{application, word_collector, [
+	{description, ""},
+	{vsn, "0.1.0"},
+	{modules, [
+		word_collector_app,
+		word_collector_sup,
+		wc_action_handler,
+		wc_mnesia,
+		wc_word_action_handler
+	]},
+	{registered, []},
+	{applications, [
+		kernel,stdlib,sasl,cowboy
+	]},
+	{mod, {word_collector_app, []}},
+	{env, []}
+]}.
