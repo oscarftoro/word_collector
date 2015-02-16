@@ -1,20 +1,30 @@
 -record(word,{
-        id          :: integer(),
-        name        :: string(),
-        definition  :: string(),
-        status      :: pasive | active,
-        examples    :: string(),
-        location    :: [location()],
-        photos      :: [photos]
+        word        :: word_name(),
+        language    :: language_initials(),
+        definition  :: word_definition(),
+        status      :: pasive | active | undefined,
+        priority    :: high | medium | low | undefined,
+        examples    :: string() | undefined,
+        locations    :: [location()] | undefined,
+        photos      :: [photos] | undefined
 }).
+
 -record(language,{
-        name               :: string(),
-        initials           :: string(),
-        is_mother_language :: boolean()
+        name               :: language_name(),
+        initials           :: language_initials(),
+        is_mother_language :: is_mother_language()
 }).
 
+-type word_name()          :: string().
+-type word_definition()    :: string().
 
--type latitude() :: float().
--type longitud() :: float().
--type location() :: {latitude(),longitud(),string()}.
--type photos()   :: [string()].
+-type language_name()      :: string() | undefined.
+-type language_initials()  :: string().
+-type is_mother_language() :: boolean().
+-type language()           :: {language_name(),language_initials(),is_mother_language()}.
+
+-type latitude()           :: float().
+-type longitud()           :: float().
+-type location()           :: {latitude(),longitud(),string()} | undefined.
+-type photos()             :: [path()].
+-type path()               :: string().
