@@ -1,0 +1,23 @@
+Requirements
+Ordbog
+
+1. Create an account
+the user can create an account in order to access the system. 
+priority: 2
+
+2. recover password
+the user can receive an email to recover his/her password
+priority: 1
+
+3. create dictionary
+the user can select a language
+priority:  3
+
+4. create word/phrase
+the user can create a word or phrase that contains the following data:
+language, word/phrase, definition,picture,place,
+priority: 5
+
+5. retrieve all words
+the user can retrieve all the words previously saved
+ 

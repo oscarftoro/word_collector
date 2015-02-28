@@ -6,15 +6,17 @@
 -define(APP,word_collector).
 
 start(_Type, _Args) ->
-	wc_mnesia:check_db_exist(),
+	wc_mnesia:check_db_exist([node()]),
+        mnesia:wait_for_tables([wc_word,wc_language],5000),
 
-	Path_list = path_list(),
+	Path_list = path_list(), 
 	Dispatch = cowboy_router:compile([
 		{'_',Path_list}
 	]),
 
 	cowboy:start_http(word_collector_app,100,[{port,8080}],
 		[{env,[{dispatch,Dispatch}]}]),
+
 	word_collector_sup:start_link().
 
 stop(_State) ->

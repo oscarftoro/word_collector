@@ -1,6 +1,8 @@
-/#.*
+\#.*
 .idea/
 Mnesia*
 deps/
 ebin/
 erl_crash.dump
+.erlang.mk.packages.v2
+
