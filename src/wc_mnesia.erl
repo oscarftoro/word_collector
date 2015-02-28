@@ -9,32 +9,46 @@
 -module(wc_mnesia).
 -author("oscar").
 -include("../include/diccionario.hrl").
-
+-include_lib("stdlib/include/qlc.hrl").
 %% API
--export([check_db_exist/0, add_word/1]).
+-export([check_db_exist/1, add_word/1,get_all_words/0,do/1,
+	install/1,install/0]).
 
-setup_mnesia() ->
-        mnesia:create_schema([node()]),
-        mnesia:start(),
-        mnesia:create_table(word, [{type,set},{record_name, word},{attributes, record_info(fields, word)}]),
-        mnesia:create_table(language,[{type,set},{record_name,language},{attributes, record_info(fields, language)}]),
-        mnesia:stop().
+install(Nodes) ->
+        ok = mnesia:create_schema(Nodes),
+        rpc:multicall(Nodes, application,start, [mnesia]),
+        
+        mnesia:create_table(wc_word, 
+			    [{type,set},
+			     %{record_name, wc_word},
+			     {attributes, record_info(fields, wc_word)},
+                             {disc_copies, Nodes}]),
+        mnesia:create_table(wc_language,
+			    [{type,set},
+			     %{record_name,wc_language},
+			     {attributes, record_info(fields, wc_language)},
+                             {disc_copies, Nodes}]),
+        rpc:multicall(Nodes,application,stop,[mnesia]).
+
+install() ->
+    install([node()]).
 
 
 
-check_db_exist()->
+
+check_db_exist(Node)->
         case filelib:wildcard("Mnesia*") of
                 [Db_name] ->
                         io:fwrite("Database of name ~p detected ",[Db_name]);
-                [] -> setup_mnesia()
+                [] -> install(Node)
         end.
 
 
 
--spec add_word(#word{}) -> {aborted,string()} | {atomic, string()}.
+-spec add_word(#wc_word{}) -> {aborted,string()} | {atomic, string()}.
 
 add_word(W) ->
-
+        
         F = fun() ->
                 mnesia:write(W)
         end,
@@ -45,3 +59,10 @@ add_word(W) ->
 
 
 
+get_all_words() ->
+        do(qlc:q([X || X <- mnesia:table(wc_word)])).
+
+do(Q) ->
+    F = fun()->qlc:e(Q) end,
+    {atomic,Val} = mnesia:transaction(F),
+    Val.
