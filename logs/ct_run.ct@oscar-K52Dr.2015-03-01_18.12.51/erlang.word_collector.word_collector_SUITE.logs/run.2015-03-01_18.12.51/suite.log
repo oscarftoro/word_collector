@@ -1,0 +1,48 @@
+=== Suite started at 2015-03-01 18:12:51
+=== Starting test, 3 test cases
+=cases         3
+=user          oscar
+=host          oscar-K52Dr
+=hosts         oscar-K52Dr 
+=emulator_vsn  6.3
+=emulator      beam
+=otp_release   17
+=started       2015-03-01 18:12:51
+=case          word_collector_SUITE:init_per_suite
+=logfile       word_collector_suite.init_per_suite.html
+=started       2015-03-01 18:12:51
+=ended         2015-03-01 18:12:52
+=result        ok
+=elapsed       0.838585
+=case          word_collector_SUITE:add_word
+=logfile       word_collector_suite.add_word.html
+=started       2015-03-01 18:12:52
+=ended         2015-03-01 18:12:52
+=result        ok
+=elapsed       4.24e-4
+=case          word_collector_SUITE:get_all_words
+=logfile       word_collector_suite.get_all_words.html
+=started       2015-03-01 18:12:52
+=ended         2015-03-01 18:12:52
+=result        ok
+=elapsed       0.015882
+=case          word_collector_SUITE:word_by_name
+=logfile       word_collector_suite.word_by_name.html
+=started       2015-03-01 18:12:52
+=ended         2015-03-01 18:12:52
+=result        ok
+=elapsed       3.51e-4
+=case          ct_framework:end_per_suite
+=logfile       ct_framework.end_per_suite.html
+=started       2015-03-01 18:12:52
+=ended         2015-03-01 18:12:52
+=result        ok
+=elapsed       1.0e-6
+=group_time    1.084s
+=== TEST COMPLETE, 3 ok, 0 failed of 3 test cases
+
+=finished      2015-03-01 18:12:52
+=failed        0
+=successful    3
+=user_skipped  0
+=auto_skipped  0

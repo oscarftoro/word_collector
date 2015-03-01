@@ -1,3 +1,0 @@
-2015-02-28 12:04:57,226 WARN  [DefaultSoapUICore] Missing folder [/home/oscar/ext] for external libraries
-2015-02-28 12:04:57,581 INFO  [DefaultSoapUICore] initialized soapui-settings from [/home/oscar/soapui-settings.xml]
-2015-02-28 12:04:58,463 INFO  [WorkspaceImpl] Loading workspace from [/home/oscar/intellij-soapui-workspace.xml]

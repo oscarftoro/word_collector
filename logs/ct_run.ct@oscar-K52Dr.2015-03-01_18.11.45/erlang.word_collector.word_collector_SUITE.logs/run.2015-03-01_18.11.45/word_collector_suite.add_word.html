@@ -1,0 +1,975 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Test word_collector_SUITE:add_word result</title>
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="../../ct_default.css" type="text/css">
+<script type="text/javascript" src="../../jquery-latest.js"></script>
+<script type="text/javascript" src="../../jquery.tablesorter.min.js"></script>
+</head>
+<body>
+
+=== <a href="word_collector_suite.src.html#add_word-1">source code for word_collector_SUITE:add_word/1</a>
+
+<pre>
+<a name="top"></a>
+=== Test case started with:
+word_collector_SUITE:add_word([{watchdog,<0.70.0>},
+                               {tc_logfile,
+                                   "/home/oscar/Development/erlang/word_collector/logs/ct_run.ct@oscar-K52Dr.2015-03-01_18.11.45/erlang.word_collector.word_collector_SUITE.logs/run.2015-03-01_18.11.45/word_collector_suite.add_word.html"},
+                               {tc_group_properties,[]},
+                               {tc_group_path,[]},
+                               {data_dir,
+                                   "/home/oscar/Development/erlang/word_collector/test/word_collector_SUITE_data/"},
+                               {priv_dir,
+                                   "/home/oscar/Development/erlang/word_collector/logs/ct_run.ct@oscar-K52Dr.2015-03-01_18.11.45/erlang.word_collector.word_collector_SUITE.logs/run.2015-03-01_18.11.45/log_private/"}])
+
+=== Current directory is "/home/oscar/Development/erlang/word_collector/logs/ct_run.ct@oscar-K52Dr.2015-03-01_18.11.45"
+
+=== Started at 2015-03-01 18:11:46
+
+<br />
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.687 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.254.0>},
+                       {name,{acceptor,<0.210.0>,44}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.688 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.255.0>},
+                       {name,{acceptor,<0.210.0>,45}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.689 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.256.0>},
+                       {name,{acceptor,<0.210.0>,46}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.690 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.257.0>},
+                       {name,{acceptor,<0.210.0>,47}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.690 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.258.0>},
+                       {name,{acceptor,<0.210.0>,48}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.691 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.259.0>},
+                       {name,{acceptor,<0.210.0>,49}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.692 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.260.0>},
+                       {name,{acceptor,<0.210.0>,50}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.693 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.261.0>},
+                       {name,{acceptor,<0.210.0>,51}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.694 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.262.0>},
+                       {name,{acceptor,<0.210.0>,52}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.695 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.263.0>},
+                       {name,{acceptor,<0.210.0>,53}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.696 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.264.0>},
+                       {name,{acceptor,<0.210.0>,54}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.696 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.265.0>},
+                       {name,{acceptor,<0.210.0>,55}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.697 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.266.0>},
+                       {name,{acceptor,<0.210.0>,56}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.698 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.267.0>},
+                       {name,{acceptor,<0.210.0>,57}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.699 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.268.0>},
+                       {name,{acceptor,<0.210.0>,58}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.700 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.269.0>},
+                       {name,{acceptor,<0.210.0>,59}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.701 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.270.0>},
+                       {name,{acceptor,<0.210.0>,60}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.701 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.271.0>},
+                       {name,{acceptor,<0.210.0>,61}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.702 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.272.0>},
+                       {name,{acceptor,<0.210.0>,62}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.703 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.273.0>},
+                       {name,{acceptor,<0.210.0>,63}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.704 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.274.0>},
+                       {name,{acceptor,<0.210.0>,64}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.705 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.275.0>},
+                       {name,{acceptor,<0.210.0>,65}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.706 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.276.0>},
+                       {name,{acceptor,<0.210.0>,66}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.706 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.277.0>},
+                       {name,{acceptor,<0.210.0>,67}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.707 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.278.0>},
+                       {name,{acceptor,<0.210.0>,68}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.708 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.279.0>},
+                       {name,{acceptor,<0.210.0>,69}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.709 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.280.0>},
+                       {name,{acceptor,<0.210.0>,70}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.710 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.281.0>},
+                       {name,{acceptor,<0.210.0>,71}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.711 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.282.0>},
+                       {name,{acceptor,<0.210.0>,72}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.711 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.283.0>},
+                       {name,{acceptor,<0.210.0>,73}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.712 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.284.0>},
+                       {name,{acceptor,<0.210.0>,74}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.713 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.285.0>},
+                       {name,{acceptor,<0.210.0>,75}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.714 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.286.0>},
+                       {name,{acceptor,<0.210.0>,76}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.715 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.287.0>},
+                       {name,{acceptor,<0.210.0>,77}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.716 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.288.0>},
+                       {name,{acceptor,<0.210.0>,78}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.716 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.289.0>},
+                       {name,{acceptor,<0.210.0>,79}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.717 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.290.0>},
+                       {name,{acceptor,<0.210.0>,80}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.718 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.291.0>},
+                       {name,{acceptor,<0.210.0>,81}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.719 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.292.0>},
+                       {name,{acceptor,<0.210.0>,82}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.720 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.293.0>},
+                       {name,{acceptor,<0.210.0>,83}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.721 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.294.0>},
+                       {name,{acceptor,<0.210.0>,84}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.721 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.295.0>},
+                       {name,{acceptor,<0.210.0>,85}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.722 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.296.0>},
+                       {name,{acceptor,<0.210.0>,86}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.723 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.297.0>},
+                       {name,{acceptor,<0.210.0>,87}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.724 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.298.0>},
+                       {name,{acceptor,<0.210.0>,88}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.724 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.299.0>},
+                       {name,{acceptor,<0.210.0>,89}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.725 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.300.0>},
+                       {name,{acceptor,<0.210.0>,90}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.726 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.301.0>},
+                       {name,{acceptor,<0.210.0>,91}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.727 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.302.0>},
+                       {name,{acceptor,<0.210.0>,92}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.728 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.303.0>},
+                       {name,{acceptor,<0.210.0>,93}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.729 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.304.0>},
+                       {name,{acceptor,<0.210.0>,94}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.729 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.305.0>},
+                       {name,{acceptor,<0.210.0>,95}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.730 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.306.0>},
+                       {name,{acceptor,<0.210.0>,96}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.731 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.307.0>},
+                       {name,{acceptor,<0.210.0>,97}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.732 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.308.0>},
+                       {name,{acceptor,<0.210.0>,98}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.733 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.309.0>},
+                       {name,{acceptor,<0.210.0>,99}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.734 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.210.0>,ranch_acceptors_sup}
+             started: [{pid,<0.310.0>},
+                       {name,{acceptor,<0.210.0>,100}},
+                       {mfargs,
+                           {ranch_acceptor,start_link,
+                               [#Port<0.3461>,ranch_tcp,<0.208.0>]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.735 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {<0.207.0>,ranch_listener_sup}
+             started: [{pid,<0.210.0>},
+                       {name,ranch_acceptors_sup},
+                       {mfargs,
+                           {ranch_acceptors_sup,start_link,
+                               [word_collector_app,100,ranch_tcp,
+                                [{port,8080}]]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.737 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {local,ranch_sup}
+             started: [{pid,<0.207.0>},
+                       {name,{ranch_listener_sup,word_collector_app}},
+                       {mfargs,
+                        {ranch_listener_sup,start_link,
+                         [word_collector_app,100,ranch_tcp,
+                          [{port,8080}],
+                          cowboy_protocol,
+                          [{env,
+                            [{dispatch,
+                              [{'_',[],
+                                [{[],[],cowboy_static,
+                                  {priv_file,word_collector,
+                                   "client/index.html",
+                                   [{mimetypes,{<<"text">>,<<"html">>,[]}}]}},
+                                 {['...'],
+                                  [],cowboy_static,
+                                  {priv_dir,word_collector,"client"}},
+                                 {[<<"ordbog">>,action],
+                                  [],wc_action_handler,[]},
+                                 {[<<"ordbog">>,<<"word">>,id,action],
+                                  [],wc_word_action_handler,[]}]}]}]}]]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.738 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+          supervisor: {local,word_collector_sup}
+             started: [{pid,<0.319.0>},
+                       {name,wc_backend},
+                       {mfargs,{wc_backend,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,brutal_kill},
+                       {child_type,worker}]
+
+</div>
+
+<div class="sasl"><b>*** System report during word_collector_SUITE:init_per_suite/1 2015-03-01 18:11:46.738 ***</b>
+
+=PROGRESS REPORT==== 1-Mar-2015::18:11:46 ===
+         application: word_collector
+          started_at: 'ct@oscar-K52Dr'
+
+</div>
+<a name="end"></a>
+
+
+=== Ended at 2015-03-01 18:11:46
+=== successfully completed test case
+=== returned value = {atomic,ok}
+</pre>
+<center>
+<br /><hr /><p>
+<a href="../../../all_runs.html">Test run history
+</a>  |  <a href="../../../index.html">Top level test index
+</a>
+</p>
+<div class="copyright">Copyright &copy; 2015 <a href="http://www.erlang.org">Open Telecom Platform</a><br />
+Updated: <!date>Sun Mar 01 2015 18:11:46<!/date><br />
+</div>
+</center>
+</body>
+</html>

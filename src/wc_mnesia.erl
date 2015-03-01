@@ -7,12 +7,12 @@
 %%% Created : 14. Nov 2014 13:47
 %%%-------------------------------------------------------------------
 -module(wc_mnesia).
--author("oscar").
+-author("oscar_toro").
 -include("../include/diccionario.hrl").
 -include_lib("stdlib/include/qlc.hrl").
 %% API
--export([check_db_exist/1, add_word/1,get_all_words/0,do/1,
-	install/1,install/0]).
+-export([check_db_exist/1,install/1,install/0]).
+-export([add_word/2,get_all_words/0,do/1,find_word/1]).
 
 install(Nodes) ->
         ok = mnesia:create_schema(Nodes),
@@ -45,10 +45,21 @@ check_db_exist(Node)->
 
 
 
--spec add_word(#wc_word{}) -> {aborted,string()} | {atomic, string()}.
+%% add word to the collection
+%% T is title whereas D is definition
+-spec add_word(binary(),binary()) -> {aborted,string()} | {atomic, string()}.
 
-add_word(W) ->
-        
+add_word(T,D) ->
+        W = #wc_word{
+	      title=T,
+	      language="dk",
+	      definition=D,
+	      status=pasive,
+	      priority=medium,
+	      examples=undefined,
+	      photos=undefined,
+	      date_time=calendar:local_time(),
+	      available=true},
         F = fun() ->
                 mnesia:write(W)
         end,
@@ -56,11 +67,15 @@ add_word(W) ->
                 {aborted,Reason} -> {aborted,Reason};
                 {atomic, Value} -> {atomic, Value}
         end.
-
-
-
+-spec get_all_words() -> [#wc_word{}] | [].
 get_all_words() ->
         do(qlc:q([X || X <- mnesia:table(wc_word)])).
+
+%% find word by word name
+-spec find_word(string()) -> [#wc_word{}] | [].
+find_word(W) ->
+    wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).
+    
 
 do(Q) ->
     F = fun()->qlc:e(Q) end,
