@@ -1,4 +1,0 @@
-:name "word_collector"
-:node-sname "wc"
-:lib-dirs '("deps","test")
-:app-include-dirs '("include")

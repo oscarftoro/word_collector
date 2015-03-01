@@ -1,4 +1,0 @@
-PROJECT = word_collector
-DEPS = cowboy jiffy
-cowboy_deps = 
-include erlang.mk
