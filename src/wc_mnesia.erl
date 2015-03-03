@@ -12,8 +12,11 @@
 -include_lib("stdlib/include/qlc.hrl").
 %% API
 -export([check_db_exist/1,install/1,install/0]).
--export([add_word/2,get_all_words/0,do/1,find_word/1,edit_word/3]).
-
+-export([add_word/2,get_all_words/0,do/1,find_word/1,edit_word/3,
+	delete_word/1,get_deleted_words/0]).
+% exported only for tests purppose, 
+% delete when we are done with db implementation
+-export([add_word/1]).
 install(Nodes) ->
         ok = mnesia:create_schema(Nodes),
         rpc:multicall(Nodes, application,start, [mnesia]),
@@ -68,8 +71,10 @@ add_word(W) ->
     
 -spec get_all_words() -> [#wc_word{}] | [].
 get_all_words() ->
-        do(qlc:q([X || X <- mnesia:table(wc_word)])).
+    do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= true])).
 
+get_deleted_words() ->
+    do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= false])).
 %% find word by word name
 %% remember you get a list of results!!!
 -spec find_word(string()) -> [#wc_word{}] | [].
@@ -84,11 +89,12 @@ find_word(W) ->
 -spec edit_word(#wc_word{},atom(),string())-> {atomic,ok} | {error,string()}.
 
 edit_word(W,Index,NewValue)->
-    %TODO: not find but pass the OldWord
-    NewW =setelement(translate_index(Index),W,NewValue),
+    [Word] = find_word(W),
+    NewW =setelement(translate_index(Index),Word,NewValue),
     add_word(NewW).
 
 -spec translate_index(atom()) -> integer().
+
 translate_index(title)      -> 2;
 translate_index(language)   -> 3;
 translate_index(definition) -> 4;
@@ -99,6 +105,10 @@ translate_index(locations)  -> 8;
 translate_index(photos)     -> 9;
 translate_index(date_time)  -> 10;
 translate_index(available)  -> 11.
+
+
+delete_word(WordName)->
+    edit_word(WordName,available,false).
 
 %% Evaluate qlc queries of type:
 %% qlc:q(query()).

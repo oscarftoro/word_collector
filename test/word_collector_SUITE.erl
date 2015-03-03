@@ -4,10 +4,10 @@
 -include("../include/diccionario.hrl").
 -export([init_per_suite/1,init_per_testcase/2,end_per_testcase/2,
 	 all/0,add_word/1,
-	 get_all_words/1,word_by_name/1, edit_word/1]).
+	 get_all_words/1,word_by_name/1, edit_word/1,delete_word/1]).
 
 all() ->
-    [add_word,get_all_words,word_by_name,edit_word].
+    [add_word,get_all_words,word_by_name,edit_word,delete_word].
 
 init_per_suite(Config) ->
    
@@ -46,11 +46,16 @@ word_by_name(_Config) ->
     [Rubia] = wc_mnesia:find_word("blondine"),
     []      = wc_mnesia:find_word("køre"),
     
-    Word#wc_word.title       =:= "kat",
-    Robot#wc_word.language   =:= "dk",
-    Rubia#wc_word.definition =:= "rubia".
+    "kat"   = Word#wc_word.title,
+    "dk"    =  Robot#wc_word.language,
+    "rubia" = Rubia#wc_word.definition.
 edit_word(_Config) ->
-    [Kat] = wc_mnesia:find_word("kat"),
-    {atomic,ok} = wc_mnesia:edit_word(Kat,definition,"gato o gata"),
-    [Result] = wc_mnesia:find_word("kat"),
-    Result#wc_word.definition =:= "gato o gata".
+    {atomic,ok}   = wc_mnesia:edit_word("kat",definition,"gato o gata"),
+    [Result]      = wc_mnesia:find_word("kat"),
+    "gato o gata" = Result#wc_word.definition.
+
+delete_word(_Config) ->
+    {atomic,ok} = wc_mnesia:delete_word("kat"),
+    [Kat]       = wc_mnesia:find_word("kat"),
+    false       = Kat#wc_word.available.
+
