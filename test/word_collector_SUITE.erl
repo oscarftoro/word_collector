@@ -4,14 +4,13 @@
 -include("../include/diccionario.hrl").
 -export([init_per_suite/1,init_per_testcase/2,end_per_testcase/2,
 	 all/0,add_word/1,
-	 get_all_words/1,word_by_name/1]).
+	 get_all_words/1,word_by_name/1, edit_word/1]).
 
 all() ->
-    [add_word,get_all_words,word_by_name].
+    [add_word,get_all_words,word_by_name,edit_word].
 
 init_per_suite(Config) ->
-    Priv = ?config(priv_dir, Config),
-    %application:set_env(mnesia,dir,Priv),
+   
     wc_mnesia:install([node()]),
     word_collector_app:start(),
     Config.
@@ -50,3 +49,8 @@ word_by_name(_Config) ->
     Word#wc_word.title       =:= "kat",
     Robot#wc_word.language   =:= "dk",
     Rubia#wc_word.definition =:= "rubia".
+edit_word(_Config) ->
+    [Kat] = wc_mnesia:find_word("kat"),
+    {atomic,ok} = wc_mnesia:edit_word(Kat,definition,"gato o gata"),
+    [Result] = wc_mnesia:find_word("kat"),
+    Result#wc_word.definition =:= "gato o gata".
