@@ -28,7 +28,7 @@
 
 -define(SERVER, ?MODULE).
 
--export([add_word/1,get_all_words/0]).
+-export([add_word/2,get_all_words/0]).
 
 -record(state, {}).
 
@@ -83,13 +83,11 @@ init([]) ->
         {noreply, NewState :: #state{}, timeout() | hibernate} |
         {stop, Reason :: term(), Reply :: term(), NewState :: #state{}} |
         {stop, Reason :: term(), NewState :: #state{}}).
-handle_call({add_word,Word}, _From, State) ->
-        Word,
-        {reply, ok, State};
+handle_call({add_word,WordName,WordDefinition}, _From, State) ->
+        Reply = wc_mnesia:add_word(WordName,WordDefinition),
+        {reply, Reply, State};
 handle_call({get_all_words},_From,State)->
-        Reply = [#wc_word{title = "hund",language = "dk",definition = "perro",status = active,
-                priority = low, examples = "min hund spiser din kat", locations = undefined,
-                photos = undefined,date_time = calendar:local_time(),available = true}],
+        Reply = wc_mnesia:get_all_words(),
         {reply,Reply,State}.
 
 %%--------------------------------------------------------------------
@@ -157,15 +155,12 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
-add_word(Word) ->
-        gen_server:call(?MODULE,{add_word,Word}).
+add_word(WordName,Definition) ->
+        gen_server:call(?MODULE,{add_word,WordName,Definition}).
 
 get_all_words() ->
         gen_server:call(?MODULE,{get_all_words}).
 
 
 %% UT
-
-
-
 
