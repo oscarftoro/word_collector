@@ -13,7 +13,7 @@
 %% API
 -export([check_db_exist/1,install/1,install/0]).
 -export([add_word/2,get_all_words/0,do/1,find_word/1,edit_word/3,
-	delete_word/1,get_deleted_words/0]).
+	delete_word/1,get_deleted_words/0,remove_word/1]).
 % exported only for tests purppose, 
 % delete when we are done with db implementation
 -export([add_word/1]).
@@ -109,6 +109,13 @@ translate_index(available)  -> 11.
 
 delete_word(WordName)->
     edit_word(WordName,available,false).
+
+remove_word(WordName)->
+    Oid = {wc_word,WordName},
+    F = fun() ->
+		mnesia:delete(Oid)
+	end,
+    mnesia:transaction(F).
 
 %% Evaluate qlc queries of type:
 %% qlc:q(query()).

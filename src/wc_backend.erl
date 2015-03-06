@@ -28,7 +28,8 @@
 
 -define(SERVER, ?MODULE).
 
--export([add_word/2,get_all_words/0]).
+-export([add_word/2,get_all_words/0,delete_word/1,edit_word/3,
+	find_word/1]).
 
 -record(state, {}).
 
@@ -88,10 +89,22 @@ handle_call({add_word,WordName,WordDefinition}, _From, State) ->
         {reply, Reply, State};
 handle_call({get_all_words},_From,State)->
         Reply = wc_mnesia:get_all_words(),
-        {reply,Reply,State}.
+    {reply,Reply,State};
+handle_call({delete_word,WordName},_From,State) ->
+    Reply = wc_mnesia:delete_word(WordName),
+    {reply,Reply,State};
+handle_call({edit_word,WordName,Item,NewValue},_From,State) ->
+    Reply = wc_mnesia:edit_word(WordName,Item,NewValue),
+    {reply,Reply,State};
+handle_call({find_word,WordName},_From,State) ->
+    Reply = wc_mnesia:find_word(WordName),% a reply can be a list of words
+    {reply,Reply,State}.
+
+
+
 
 %%--------------------------------------------------------------------
-%% @private
+%% @privat
 %% @doc
 %% Handling cast messages
 %%
@@ -161,6 +174,17 @@ add_word(WordName,Definition) ->
 get_all_words() ->
         gen_server:call(?MODULE,{get_all_words}).
 
-
+delete_word(WordName)->
+    gen_server:call(?MODULE,{delete_word,WordName}).
 %% UT
+%% WordName is the index of word
+%% Item can be an atom of tipe: title, language, definition,
+%% status, priority,examples, locations, photos, 
+%% date_time, available
+%% Newvalue is of course the new value as string
+-spec edit_word(string(),atom(),string())->{ok,atom} |{error,string()}.
+edit_word(WordName,Item,NewValue)->
+    gen_server:call(?MODULE,{edit_word,WordName, Item,NewValue}).
 
+find_word(WordName)->    
+    gen_server:call(?MODULE,{find_word,WordName}).
