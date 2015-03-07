@@ -13,7 +13,14 @@ generator_add_find_word_test() ->
     ?assertEqual("bord",Board#wc_word.title),
     ?assertEqual("vin",Vin#wc_word.title)
     end}.
-
+generator_get_all_words_test() ->
+    {setup,
+    fun start/0,
+    fun stop/1,
+    fun get_all_words_test/1,
+    fun(Words) ->
+    ?assertNot(length(Words) == 0)
+    end}.
 start() ->
     word_collector_app:start().
 
@@ -28,3 +35,7 @@ add_find_word_test(_) ->
     [Board] = wc_mnesia:find_word("bord"),
     [Vin,Board].
 
+get_all_words_test(_)->
+    Result = wc_backend:get_all_words(),
+    Result.
+    
