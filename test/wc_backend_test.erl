@@ -16,12 +16,9 @@ generator_add_find_word_test() ->
 
 start() ->
     word_collector_app:start().
-   
-  
+
 stop(Words)->
-   [Vin,Board] = Words,
-   wc_mnesia:remove_word(Vin#wc_word.title),
-   wc_mnesia:remove_word(Board#wc_word.title),
+   [wc_mnesia:remove_word(W#wc_word.title)||  W <- Words],
    word_collector_app:stop().
 
 add_find_word_test(_) ->
