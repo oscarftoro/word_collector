@@ -2,7 +2,7 @@
 -author("oscar_toro").
 -include_lib("common_test/include/ct.hrl").
 -include("../include/diccionario.hrl").
--export([init_per_suite/1,init_per_testcase/2,end_per_testcase/2,
+-export([init_per_suite/1,end_per_suite/1,init_per_testcase/2,end_per_testcase/2,
 	 all/0,add_word/1,
 	 get_all_words/1,word_by_name/1, edit_word/1,delete_word/1]).
 
@@ -38,7 +38,11 @@ add_word(_Config) ->
     {atomic,ok} = wc_mnesia:add_word("robot","robot").
 
 get_all_words(_Config) ->
-   [One,Two,Three,Four] = wc_mnesia:get_all_words().
+    [One,Two,Three,Four] = wc_mnesia:get_all_words(),
+    One#wc_word.title,
+    Two#wc_word.title,
+    Three#wc_word.title,
+    Four#wc_word.title.
     
 word_by_name(_Config) ->
     [Word]  = wc_mnesia:find_word("kat"),

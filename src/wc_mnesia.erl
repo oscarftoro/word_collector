@@ -20,8 +20,8 @@
 
 -spec install(atom() | [atom()]) -> {[any()],[atom()]}.
 install(Nodes) ->
-        ok = mnesia:create_schema(Nodes),
-        {[_Any],[_atom]} =rpc:multicall(Nodes, application,start, [mnesia]),
+        ok               = mnesia:create_schema(Nodes),
+        {[_Any],[_atom]} = rpc:multicall(Nodes, application,start, [mnesia]),
         
         mnesia:create_table(wc_word, 
 			    [{type,set},
