@@ -13,7 +13,7 @@ init([]) ->
 	{ok, {{one_for_one, 1, 5}, [child(wc_backend,none)]}}.
 
 child(Module, none) ->
-        {Module, {Module, start_link, []}, permanent, brutal_kill, worker, [Module]};
-child(Module, Name) ->
-        {{Module, Name}, {Module, start_link, [Name]},
-                permanent, brutal_kill, worker, [Module]}.
+        {Module, {Module, start_link, []}, permanent, brutal_kill, worker, [Module]}.
+%% child(Module, Name) ->
+%%         {{Module, Name}, {Module, start_link, [Name]},
+%%                 permanent, brutal_kill, worker, [Module]}.

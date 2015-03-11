@@ -17,9 +17,11 @@
 % exported only for tests purppose, 
 % delete when we are done with db implementation
 -export([add_word/1]).
+
+-spec install(atom() | [atom()]) -> {[any()],[atom()]}.
 install(Nodes) ->
         ok = mnesia:create_schema(Nodes),
-        rpc:multicall(Nodes, application,start, [mnesia]),
+        {[_Any],[_atom]} =rpc:multicall(Nodes, application,start, [mnesia]),
         
         mnesia:create_table(wc_word, 
 			    [{type,set},
@@ -33,9 +35,11 @@ install(Nodes) ->
                              {disc_copies, Nodes}]),
         rpc:multicall(Nodes,application,stop,[mnesia]).
 
+-spec install() -> {[any()],[atom()]}.
 install() ->
     install([node()]).
 
+-spec check_db_exist(atom())-> ok | {[any()],[atom()]}.
 check_db_exist(Node)->
         case filelib:wildcard("Mnesia*") of
                 [Db_name] ->
@@ -45,7 +49,7 @@ check_db_exist(Node)->
 
 %% add word to the collection
 %% T is title whereas D is definition
--spec add_word(binary(),binary()) -> {aborted,string()} | {atomic, string()}.
+-spec add_word(undefined | binary(),undefined | binary()) -> {aborted,_} | {atomic,_ }.
 
 add_word(T,D) ->
         W = #wc_word{
@@ -59,7 +63,7 @@ add_word(T,D) ->
 	      date_time=calendar:local_time(),
 	      available=true},
     add_word(W).
-
+-spec add_word(#wc_word{}) -> {'aborted',_} | {'atomic',_}.
 add_word(W) ->
     F = fun() ->
                 mnesia:write(W)
@@ -86,7 +90,9 @@ find_word(W) ->
 %% second parameter is the element to be edited
 %% third value is a string with the new value
    
--spec edit_word(#wc_word{},atom(),string())-> {atomic,ok} | {error,string()}.
+-spec edit_word(string(),available | date_time | definition     
+  |examples | language | locations | photos | priority | status 
+  |title,string() | true | false)-> {atomic,_} | {aborted,_}.
 
 edit_word(W,Index,NewValue)->
     [Word] = find_word(W),
@@ -106,7 +112,7 @@ translate_index(photos)     -> 9;
 translate_index(date_time)  -> 10;
 translate_index(available)  -> 11.
 
-
+-spec delete_word(string()) ->  {atomic,_} | {aborted,_}.
 delete_word(WordName)->
     edit_word(WordName,available,false).
 
