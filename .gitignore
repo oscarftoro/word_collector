@@ -6,3 +6,7 @@ ebin/
 erl_crash.dump
 .erlang.mk.packages.v2
 .edts
+test/*.beam
+test/.#*
+test/#*
+*.beam

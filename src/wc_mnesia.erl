@@ -21,7 +21,7 @@
 -spec install(atom() | [atom()]) -> {[any()],[atom()]}.
 install(Nodes) ->
         ok               = mnesia:create_schema(Nodes),
-        {[_Any],[_atom]} = rpc:multicall(Nodes, application,start, [mnesia]),
+        {[_Any],_AtomList} = rpc:multicall(Nodes, application,start, [mnesia]),
         
         mnesia:create_table(wc_word, 
 			    [{type,set},
@@ -41,7 +41,7 @@ install() ->
 
 -spec check_db_exist(atom())-> ok | {[any()],[atom()]}.
 check_db_exist(Node)->
-        case filelib:wildcard("Mnesia*") of
+        case filelib:wildcard("*@*") of
                 [Db_name] ->
                         io:fwrite("Database of name ~p detected ",[Db_name]);
                 [] -> install(Node)
