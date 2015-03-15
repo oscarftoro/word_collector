@@ -10,3 +10,4 @@ test/*.beam
 test/.#*
 test/#*
 *.beam
+.word_collector.plt
