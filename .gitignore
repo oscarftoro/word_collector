@@ -11,3 +11,4 @@ test/.#*
 test/#*
 *.beam
 .word_collector.plt
+logs/
