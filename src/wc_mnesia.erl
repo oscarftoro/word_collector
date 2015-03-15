@@ -20,70 +20,71 @@
 
 -spec install(atom() | [atom()]) -> {[any()],[atom()]}.
 install(Nodes) ->
-        ok               = mnesia:create_schema(Nodes),
-        {[_Any],_AtomList} = rpc:multicall(Nodes, application,start, [mnesia]),
+  ok                 = mnesia:create_schema(Nodes),
+  {[_Any],_AtomList} = rpc:multicall(Nodes, application,start, [mnesia]),
         
-        mnesia:create_table(wc_word, 
-			    [{type,set},
-			     %{record_name, wc_word},
-			     {attributes, record_info(fields, wc_word)},
-                             {disc_copies, Nodes}]),
-        mnesia:create_table(wc_language,
-			    [{type,set},
-			     %{record_name,wc_language},
-			     {attributes, record_info(fields, wc_language)},
-                             {disc_copies, Nodes}]),
-        rpc:multicall(Nodes,application,stop,[mnesia]).
+  mnesia:create_table(wc_word, 
+  [{type,set},
+  %{record_name, wc_word},
+  {attributes, record_info(fields, wc_word)},
+  {disc_copies, Nodes}]),
+
+  mnesia:create_table(wc_language,
+    [{type,set},
+    %{record_name,wc_language},
+    {attributes, record_info(fields, wc_language)},
+    {disc_copies, Nodes}]),
+    rpc:multicall(Nodes,application,stop,[mnesia]).
 
 -spec install() -> {[any()],[atom()]}.
 install() ->
-    install([node()]).
+  install([node()]).
 
--spec check_db_exist(atom())-> ok | {[any()],[atom()]}.
+-spec check_db_exist(atom()| [atom()])-> ok | {[any()],[atom()]}.
 check_db_exist(Node)->
-        case filelib:wildcard("*@*") of
-                [Db_name] ->
-                        io:fwrite("Database of name ~p detected ",[Db_name]);
-                [] -> install(Node)
-        end.
+  case filelib:wildcard("Mnesia*") of
+    [Db_name] ->
+      io:fwrite("Database of name ~p detected ",[Db_name]), ok;
+    [] -> install(Node)
+      end.
 
 %% add word to the collection
 %% T is title whereas D is definition
 -spec add_word(undefined | binary(),undefined | binary()) -> {aborted,_} | {atomic,_ }.
 
 add_word(T,D) ->
-        W = #wc_word{
-	      title=T,
-	      language="dk",
-	      definition=D,
-	      status=pasive,
-	      priority=medium,
-	      examples=undefined,
-	      photos=undefined,
-	      date_time=calendar:local_time(),
-	      available=true},
+  W = #wc_word{
+    title=T,
+    language="dk",
+    definition=D,
+    status=pasive,
+    priority=medium,
+    examples=undefined,
+    photos=undefined,
+    date_time=calendar:local_time(),
+    available=true},
     add_word(W).
 -spec add_word(#wc_word{}) -> {'aborted',_} | {'atomic',_}.
 add_word(W) ->
-    F = fun() ->
-                mnesia:write(W)
-        end,
-        case mnesia:transaction(F) of
-                {aborted,Reason} -> {aborted,Reason};
-                {atomic, Value} -> {atomic, Value}
-        end.
+  F = fun() ->
+        mnesia:write(W)
+      end,
+  case mnesia:transaction(F) of
+    {aborted,Reason} -> {aborted,Reason};
+    {atomic, Value} -> {atomic, Value}
+  end.
     
 -spec get_all_words() -> [#wc_word{}] | [].
 get_all_words() ->
-    do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= true])).
+  do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= true])).
 
 get_deleted_words() ->
-    do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= false])).
+  do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= false])).
 %% find word by word name
 %% remember you get a list of results!!!
 -spec find_word(string()) -> [#wc_word{}] | [].
 find_word(W) ->
-    wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).
+  wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).
 
 %edit word! 
 %% first parameter is the record to be edited, 
@@ -95,9 +96,9 @@ find_word(W) ->
   |title,string() | true | false)-> {atomic,_} | {aborted,_}.
 
 edit_word(W,Index,NewValue)->
-    [Word] = find_word(W),
-    NewW =setelement(translate_index(Index),Word,NewValue),
-    add_word(NewW).
+  [Word] = find_word(W),
+  NewW =setelement(translate_index(Index),Word,NewValue),
+  add_word(NewW).
 
 -spec translate_index(atom()) -> integer().
 
@@ -114,19 +115,19 @@ translate_index(available)  -> 11.
 
 -spec delete_word(string()) ->  {atomic,_} | {aborted,_}.
 delete_word(WordName)->
-    edit_word(WordName,available,false).
+  edit_word(WordName,available,false).
 
 remove_word(WordName)->
-    Oid = {wc_word,WordName},
-    F = fun() ->
-		mnesia:delete(Oid)
-	end,
+  Oid = {wc_word,WordName},
+  F = fun() ->
+    mnesia:delete(Oid)
+  end,
     mnesia:transaction(F).
 
 %% Evaluate qlc queries of type:
 %% qlc:q(query()).
 %% query() = [Something|| Something <- mnesia:table(SomeTable),Predicate]
 do(Q) ->
-    F = fun()->qlc:e(Q) end,
-    {atomic,Val} = mnesia:transaction(F),
-    Val.
+  F = fun()->qlc:e(Q) end,
+  {atomic,Val} = mnesia:transaction(F),
+  Val.
