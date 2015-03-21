@@ -17,41 +17,40 @@ groups() ->
   {getAllDelete,[sequence],[get_all_words_test,delete_words_test]}].
 
 init_per_suite(Config) ->
-  
-
+ 
   wc_mnesia:install(),
   word_collector_app:start(),
-  Config.
-
-init_per_group(getAllDelete,Config)->
-  wc_backend:add_word("peter","pedro"),
-  wc_backend:add_word("mobiltelefon","celular"),
-  [{words,["peter","mobiltelefon"]}|Config];
-
-
-init_per_group(_,Config) ->
-  Config.
-
-init_per_testcase(_,Config)->
-  Config.
-end_per_testcase(get_all_words_test,_Config) ->
-  wc_mnesia:remove_word("uge");
-
-end_per_testcase(_,Config) ->
-  Config.
-
-end_per_group(addFind,Config)->
-  lists:foreach(fun(W) -> wc_mnesia:remove_word(W) end,["vin","bord"]),  
-  Config;
-
-end_per_group(getAllDelete,Config) ->
-
   Config.
 
 end_per_suite(_Config)->
   application:stop(word_collector),
   application:stop(sasl),
   ok.
+init_per_group(getAllDelete,Config)->
+  wc_backend:add_word("peter","pedro"),
+  wc_backend:add_word("mobiltelefon","celular"),
+  [{words,["peter","mobiltelefon"]}|Config];
+
+init_per_group(_,Config) ->
+  Config.
+
+end_per_group(getAllDelete,Config) ->
+  Config;
+
+end_per_group(addFind,Config)->
+  lists:foreach(fun(W) -> 
+    wc_mnesia:remove_word(W) 
+  end,["vin","bord"]),  
+  Config.
+
+init_per_testcase(_,Config)->
+  Config.
+
+end_per_testcase(get_all_words_test,_Config) ->
+  wc_mnesia:remove_word("uge");
+
+end_per_testcase(_,Config) ->
+  Config.
 
 add_word_test(Config) ->
   wc_backend:add_word("vin","vino"),
