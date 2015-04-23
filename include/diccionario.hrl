@@ -1,14 +1,14 @@
 -record(wc_word,{
-        title       :: word_name(),
-        language    :: language_initials(),
-        definition  :: word_definition(),
-        status      :: pasive | active | undefined,
-        priority    :: high | medium | low | undefined,
-        examples    :: string() | undefined,
-        locations   :: [location()] | undefined,
-        photos      :: [photos] | undefined,
-	date_time   :: datetime(),
-	available   :: boolean()
+  title            :: word_name(),
+  language         :: language_initials(),
+  definition       :: word_definition(),
+  status           :: pasive | active | undefined,
+  priority         :: high | medium | low | undefined,
+  examples         :: string() | undefined,
+  locations   = [] :: [{datetime(),location()}] | undefined,
+  photos      = [] :: [photos] | undefined,
+  date_time        :: datetime(),
+  available        :: boolean()
 	
 }).
 
@@ -28,6 +28,6 @@
 
 -type latitude()           :: float().
 -type longitud()           :: float().
--type location()           :: {latitude(),longitud(),string()} | undefined.
+-type location()           :: {{latitude(),longitud(),string()}, datetime()} | undefined.
 -type photos()             :: [path()].
 -type path()               :: string().
