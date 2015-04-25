@@ -7,7 +7,7 @@
   examples         :: binary() | undefined,
   locations   = [] :: [{datetime(),location()}] | [],
   photos      = [] :: [photos] | [],
-  date_time        :: datetime(),
+  date_time        :: date_time(),
   available        :: boolean()
 	
 }).
@@ -20,7 +20,7 @@
 
 -type word_name()          :: binary().
 -type word_definition()    :: binary().
--type datetime()           :: {{integer(),integer(),integer()},{integer(),integer(),integer()}}.
+-type datetime()           :: [integer(),integer(),integer(),integer(),integer(),integer()].
 -type language_name()      :: binary() | undefined.
 -type language_initials()  :: binary().
 -type is_mother_language() :: boolean().

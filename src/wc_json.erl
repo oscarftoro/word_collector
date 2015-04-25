@@ -16,12 +16,19 @@ encode(#wc_language{} = Rec) ->
 decode(Bin) ->
   {PrpList} = jiffy:decode(Bin),
   PropList  = [{binary_to_atom(K,utf8),V} || {K,V} <- PrpList],
-  Seq       = lists:seq(2,11),
-  Values    = [V ||  {_K,V} <- PropList], %% all the values
-  Formated  = lists:zip(Seq,Values), %proplist{int,binary() | []}
-  Word      = #wc_word{},
-  lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Word,Formated).
+  case hd(PropList) of
+    {title,_Value} -> decoder(PropList,lists:seq(2,11));
+    {name, _Value}  -> decoder(PropList,lists:seq(2,4))
+  end.
+	  
+decoder(PL,L) ->
 
+  Values    = [V ||  {_K,V} <- PL], %% all the values
+  Formated  = lists:zip(L,Values), %proplist{int,binary() | []}
+  Word      = #wc_word{},
+  lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Word,Formated).   
+
+    
 -spec record_to_proplist(#wc_word{}) -> [{atom(),any()}].
 record_to_proplist(#wc_word{} = Rec) ->
   lists:zip(record_info(fields,wc_word),   

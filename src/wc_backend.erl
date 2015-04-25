@@ -182,7 +182,7 @@ delete_word(WordName)->
 %% status, priority,examples, locations, photos, 
 %% date_time, available
 %% Newvalue is of course the new value as string
--spec edit_word(string(),atom(),string())->{ok,atom} |{error,string()}.
+-spec edit_word(binary(),atom(),binary())->{ok,atom} |{error,string()}.
 edit_word(WordName,Item,NewValue)->
     gen_server:call(?MODULE,{edit_word,WordName, Item,NewValue}).
 
