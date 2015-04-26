@@ -34,10 +34,13 @@ content_types_provided(Req, State) ->
   {[{<<"application/json">>, handle_request}], Req, State}.
 
 handle_request(Req,State)->
-  handle_method(cowboy_req:method(Req),Req,State).
+  handle_method(cowboy_req:get(method,Req),Req,State).
 
 -spec handle_method(<<_:24,_:_*8>>,_,_)->{<<_:64,_:_*8>>,_,_}.
 handle_method(<<"GET">>,Req,State)->
+  {AllBindings,_Req1} = cowboy_req:bindings(Req),
+  AllBindings,
+  io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,AllBindings]),
   {<<"{\"rest\": \"Hello World!\"}">>,Req,State};
 %to create a new Word
 handle_method(<<"PUT">>,Req,State) ->

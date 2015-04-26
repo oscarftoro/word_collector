@@ -2,8 +2,10 @@
 A web application to store words from foreign languages
 
 To start the application call:
-##Production mode
+## Production mode
 make start
 
-##Debugging mode - use the error logger 
+## Debugging mode - use the error logger 
 make debug
+
+
