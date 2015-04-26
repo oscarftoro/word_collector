@@ -5,29 +5,38 @@
 -include_lib("eunit/include/eunit.hrl").
 -include("../include/diccionario.hrl").
 
+%% Encode Word or Language records to JSON
+%%
 -spec encode(#wc_word{}) -> binary().
 encode(#wc_word{} = Rec) ->  
   jiffy:encode({record_to_proplist(Rec)});
+
 encode(#wc_language{} = Rec) ->
   jiffy:encode({record_to_proplist(Rec)}).
 
-%% TODO: Implement languages also
-%% decode only words
+%% Decode Json Binaries to wc_words or wc_languages
+%% 
+-spec decode(binary()) ->#wc_word{} | #wc_language{}.
 decode(Bin) ->
   {PrpList} = jiffy:decode(Bin),
   PropList  = [{binary_to_atom(K,utf8),V} || {K,V} <- PrpList],
   case hd(PropList) of
-    {title,_Value} -> decoder(PropList,lists:seq(2,11));
-    {name, _Value}  -> decoder(PropList,lists:seq(2,4))
+    {title,_Value}  -> decoder(PropList,lists:seq(2,11),#wc_word{});
+    {name, _Value}  -> decoder(PropList,lists:seq(2,4),#wc_language{})
   end.
-	  
-decoder(PL,L) ->
 
-  Values    = [V ||  {_K,V} <- PL], %% all the values
-  Formated  = lists:zip(L,Values), %proplist{int,binary() | []}
-  Word      = #wc_word{},
-  lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Word,Formated).   
+%% Auxiliar funtion that performs decoding of PropList.
+%% Takes a Properlist with key/values of the record(PL)
+%% A List of numbers with indexes of the record(L) 
+%% And the record itself. Returns a record.
+%% The Index 1 of a record is the record's name,
+%% that is why the Indexes starts at 2, which is the first
+%% value of the record.	  
+decoder(PL,L, Rec) ->
 
+  Values    = [V ||  {_K,V} <- PL], % all the values
+  Formated  = lists:zip(L,Values), % proplist{int,binary() | []}
+  lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Rec,Formated).   
     
 -spec record_to_proplist(#wc_word{}) -> [{atom(),any()}].
 record_to_proplist(#wc_word{} = Rec) ->
@@ -38,7 +47,10 @@ record_to_proplist(#wc_language{} = Rec) ->
   lists:zip(record_info(fields,wc_language),
   tl(tuple_to_list(Rec))).
 
-encode_test() ->
+%%%%%%%%%%%%%%%%%%%
+%%%%%%%TEST%%%%%%%%
+%%%%%%%%%%%%%%%%%%%
+encode_decode_word_test() ->
 
   W = #wc_word{title = <<"numse">>, definition = <<"popin">>},
   Encoded = encode(W),
@@ -46,13 +58,18 @@ encode_test() ->
   ?assert(<<"numse">> =:= W2#wc_word.title),     
   ?assert(<<"popin">> =:= W2#wc_word.definition).
     
+encode_decode_language_test() ->
+  L       = #wc_language{name = <<"español"/utf8>>, initials = <<"es">>, is_mother_language = true},
+  L2      = #wc_language{name = <<"spanish"/utf8>>, initials = <<"sp">>, is_mother_language = true},
+  Encoded = encode(L),
+  Decoded = decode(Encoded), 
 
- 
-%% decode_test()->
-%%   W = #wc_word{title="numse", definition="popin"},
-%%   ok = decode(<<"{\"word\":{\"title\": \"numse\",
-%%   \"definition\":\"popin\"}}">>),
-%%    W, true =:= true.
+  Encoded2 = encode(L2),
+  Decoded2 = decode(Encoded2),
+  
+  ?assert(<<"español"/utf8>> =:= Decoded#wc_language.name),
+  ?assert(<<"spanish">>      =:= Decoded2#wc_language.name).
+
 
 
 
