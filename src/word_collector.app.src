@@ -10,7 +10,7 @@
 	]},
 	{registered, []},
 	{applications, [
-		kernel,stdlib,sasl,cowboy,mnesia
+		kernel,stdlib,sasl,cowboy,mnesia,sync
 	]},
 	{mod, {word_collector_app, []}},
 	{env, []}

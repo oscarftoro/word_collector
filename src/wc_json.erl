@@ -1,19 +1,29 @@
 -module(wc_json).
 -export([encode/1,decode/1,record_to_proplist/1]).
 
-
 -include_lib("eunit/include/eunit.hrl").
 -include("../include/diccionario.hrl").
 
+-ifdef(debug_flag).
+-define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
+-else.
+-define(DEBUG(X),void).
+-endif.
+
+
 %% Encode Word or Language records to JSON
 %%
--spec encode(#wc_word{}) -> binary().
+-spec encode(#wc_word{} | [#wc_word{}]) -> binary().
 encode(#wc_word{} = Rec) ->  
   jiffy:encode({record_to_proplist(Rec)});
 
+  
 encode(#wc_language{} = Rec) ->
-  jiffy:encode({record_to_proplist(Rec)}).
+  jiffy:encode({record_to_proplist(Rec)});
 
+encode(L)->
+  Words = [{record_to_proplist(W)}|| W <- L],
+  jiffy:encode({[{words,Words}]}).
 %% Decode Json Binaries to wc_words or wc_languages
 %% 
 -spec decode(binary()) ->#wc_word{} | #wc_language{}.
