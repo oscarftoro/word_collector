@@ -15,24 +15,27 @@
 %%
 -spec encode(#wc_word{} | [#wc_word{}]) -> binary().
 encode(#wc_word{} = Rec) ->  
-  jiffy:encode({record_to_proplist(Rec)});
+  jiffy:encode({[{word,{record_to_proplist(Rec)}}]});
 
-  
 encode(#wc_language{} = Rec) ->
-  jiffy:encode({record_to_proplist(Rec)});
-
-encode(L)->
+  jiffy:encode({[{language,{record_to_proplist(Rec)}}]});
+%% endcode lists of words
+encode(L)-> 
   Words = [{record_to_proplist(W)}|| W <- L],
   jiffy:encode({[{words,Words}]}).
+
 %% Decode Json Binaries to wc_words or wc_languages
-%% 
+%% decode only decode one element!
 -spec decode(binary()) ->#wc_word{} | #wc_language{}.
 decode(Bin) ->
-  {PrpList} = jiffy:decode(Bin),
-  PropList  = [{binary_to_atom(K,utf8),V} || {K,V} <- PrpList],
-  case hd(PropList) of
-    {title,_Value}  -> decoder(PropList,lists:seq(2,11),#wc_word{});
-    {name, _Value}  -> decoder(PropList,lists:seq(2,4),#wc_language{})
+  {Decoded} = jiffy:decode(Bin),
+  [{Type,{PL}}] = Decoded,
+  PropList  = [{binary_to_atom(K,utf8),V} || {K,V} <- PL],
+
+  case Type  of
+    <<"word">>  -> decoder(PropList,lists:seq(2,11),#wc_word{});
+    <<"words">> -> not_implemented;
+    <<"language">>  -> decoder(PropList,lists:seq(2,4),#wc_language{})
   end.
 
 %% Auxiliar funtion that performs decoding of PropList.
@@ -82,4 +85,11 @@ encode_decode_language_test() ->
 
 
 
+encode_decode_words_test() ->
+  W1 = #wc_word{title = <<"flink">>, definition = <<"amable">>},
+  W2 = #wc_word{title = <<"sød"/utf8>>, definition = <<"dulce">>},
+ 
+  Encoded = encode([W1,W2]),
+  Decoded = decode(Encoded),Decoded,
+  ?assert(true=:= true).
 
