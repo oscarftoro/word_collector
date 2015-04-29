@@ -21,21 +21,24 @@ encode(#wc_language{} = Rec) ->
   jiffy:encode({[{language,{record_to_proplist(Rec)}}]});
 %% endcode lists of words
 encode(L)-> 
+  ?DEBUG(L),
   Words = [{record_to_proplist(W)}|| W <- L],
   jiffy:encode({[{words,Words}]}).
 
 %% Decode Json Binaries to wc_words or wc_languages
-%% decode only decode one element!
--spec decode(binary()) ->#wc_word{} | #wc_language{}.
+%% 
+-spec decode(binary()) ->#wc_word{} | #wc_language{} | 
+  [#wc_word{}] | [#wc_language{}].
 decode(Bin) ->
-  {Decoded} = jiffy:decode(Bin),
-  [{Type,{PL}}] = Decoded,
-  PropList  = [{binary_to_atom(K,utf8),V} || {K,V} <- PL],
-
+  {Decoded} = jiffy:decode(Bin),?DEBUG(Decoded),
+  [{Type,ToDecode}] = Decoded,?DEBUG(Type),%one word
+  
+  ?DEBUG(ToDecode),
   case Type  of
-    <<"word">>  -> decoder(PropList,lists:seq(2,11),#wc_word{});
-    <<"words">> -> not_implemented;
-    <<"language">>  -> decoder(PropList,lists:seq(2,4),#wc_language{})
+  <<"word">>  -> one_record_decoder(ToDecode,lists:seq(2,11),#wc_word{});
+  <<"words">> -> [ #wc_word{title = <<"undefined">>}];
+  <<"language">>  -> one_record_decoder(ToDecode,lists:seq(2,4),#wc_language{});
+  <<"languages">> -> not_implemented
   end.
 
 %% Auxiliar funtion that performs decoding of PropList.
@@ -45,8 +48,8 @@ decode(Bin) ->
 %% The Index 1 of a record is the record's name,
 %% that is why the Indexes starts at 2, which is the first
 %% value of the record.	  
-decoder(PL,L, Rec) ->
-
+one_record_decoder(TD,L, Rec) ->
+  {PL} = TD, 
   Values    = [V ||  {_K,V} <- PL], % all the values
   Formated  = lists:zip(L,Values), % proplist{int,binary() | []}
   lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Rec,Formated).   
@@ -90,6 +93,8 @@ encode_decode_words_test() ->
   W2 = #wc_word{title = <<"sød"/utf8>>, definition = <<"dulce">>},
  
   Encoded = encode([W1,W2]),
-  Decoded = decode(Encoded),Decoded,
-  ?assert(true=:= true).
+  Decoded = decode(Encoded),
+  A = hd(Encoded), B =tl(Decoded),
+  ?assert(A#wc_word.title =:= <<"flink">>),
+  ?assert(B#wc_word.title =:= <<"sød"/utf8>>).
 
