@@ -1,3 +1,4 @@
+%% -*- coding: utf-8 -*-
 -module(wc_json).
 -export([encode/1,decode/1,record_to_proplist/1]).
 
@@ -21,7 +22,6 @@ encode(#wc_language{} = Rec) ->
   jiffy:encode({[{language,{record_to_proplist(Rec)}}]});
 %% endcode lists of words
 encode(L)-> 
-  ?DEBUG(L),
   Words = [{record_to_proplist(W)}|| W <- L],
   jiffy:encode({[{words,Words}]}).
 
@@ -30,14 +30,18 @@ encode(L)->
 -spec decode(binary()) ->#wc_word{} | #wc_language{} | 
   [#wc_word{}] | [#wc_language{}].
 decode(Bin) ->
-  {Decoded} = jiffy:decode(Bin),?DEBUG(Decoded),
-  [{Type,ToDecode}] = Decoded,?DEBUG(Type),%one word
+  {Decoded} = jiffy:decode(Bin),
+  [{Type,ToDecode}] = Decoded,
   
-  ?DEBUG(ToDecode),
   case Type  of
-  <<"word">>  -> one_record_decoder(ToDecode,lists:seq(2,11),#wc_word{});
-  <<"words">> -> [ #wc_word{title = <<"undefined">>}];
-  <<"language">>  -> one_record_decoder(ToDecode,lists:seq(2,4),#wc_language{});
+  <<"word">>  -> 
+    {TD} = ToDecode,
+    one_record_decoder(TD,lists:seq(2,11),#wc_word{});
+  <<"words">> -> 
+    list_of_records_decoder(ToDecode);
+  <<"language">>  ->
+   {TD} = ToDecode,
+    one_record_decoder(TD,lists:seq(2,4),#wc_language{});
   <<"languages">> -> not_implemented
   end.
 
@@ -48,11 +52,18 @@ decode(Bin) ->
 %% The Index 1 of a record is the record's name,
 %% that is why the Indexes starts at 2, which is the first
 %% value of the record.	  
-one_record_decoder(TD,L, Rec) ->
-  {PL} = TD, 
+one_record_decoder(PL,L, Rec) ->
+ 
   Values    = [V ||  {_K,V} <- PL], % all the values
   Formated  = lists:zip(L,Values), % proplist{int,binary() | []}
-  lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Rec,Formated).   
+  lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Rec,Formated). 
+
+list_of_records_decoder(TD) ->
+  ?DEBUG(TD),
+  PLs = [PL || {PL} <-TD],
+  [one_record_decoder(PL,lists:seq(2,11),#wc_word{}) ||
+    PL <- PLs].
+  
     
 -spec record_to_proplist(#wc_word{}) -> [{atom(),any()}].
 record_to_proplist(#wc_word{} = Rec) ->
@@ -62,6 +73,8 @@ record_to_proplist(#wc_word{} = Rec) ->
 record_to_proplist(#wc_language{} = Rec) ->
   lists:zip(record_info(fields,wc_language),
   tl(tuple_to_list(Rec))).
+
+
 
 %%%%%%%%%%%%%%%%%%%
 %%%%%%%TEST%%%%%%%%
