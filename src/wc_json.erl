@@ -20,10 +20,24 @@ encode(#wc_word{} = Rec) ->
 
 encode(#wc_language{} = Rec) ->
   jiffy:encode({[{language,{record_to_proplist(Rec)}}]});
+
 %% endcode lists of words
-encode(L)-> 
-  Words = [{record_to_proplist(W)}|| W <- L],
+encode(Ls)-> 
+  Head = hd(Ls),
+
+  if is_record(Head,wc_word) ->
+    encode_list_of_words(Ls);
+  true -> %read it as else 
+    encode_list_of_langs(Ls)
+  end.
+
+encode_list_of_words(Ls)->
+  Words = [{record_to_proplist(W)}|| W <- Ls],
   jiffy:encode({[{words,Words}]}).
+
+encode_list_of_langs(Ls) ->
+  Langs = [{record_to_proplist(L)}|| L <- Ls],
+  jiffy:encode({[{languages,Langs}]}).
 
 %% Decode Json Binaries to wc_words or wc_languages
 %% 
@@ -43,7 +57,8 @@ decode(Bin) ->
   <<"language">>  ->
    {TD} = ToDecode,
     one_record_decoder(TD,lists:seq(2,4),#wc_language{});
-  <<"languages">> -> not_implemented
+  <<"languages">> -> 
+    list_of_records_decoder(ToDecode)
   end.
 
 %% Auxiliar funtion that performs decoding of PropList.
