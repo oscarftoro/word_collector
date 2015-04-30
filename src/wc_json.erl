@@ -29,6 +29,7 @@ encode(L)->
 %% 
 -spec decode(binary()) ->#wc_word{} | #wc_language{} | 
   [#wc_word{}] | [#wc_language{}].
+
 decode(Bin) ->
   {Decoded} = jiffy:decode(Bin),
   [{Type,ToDecode}] = Decoded,
@@ -88,8 +89,8 @@ encode_decode_word_test() ->
   ?assert(<<"popin">> =:= W2#wc_word.definition).
     
 encode_decode_language_test() ->
-  L       = #wc_language{name = <<"español"/utf8>>, initials = <<"es">>, is_mother_language = true},
-  L2      = #wc_language{name = <<"spanish"/utf8>>, initials = <<"sp">>, is_mother_language = true},
+  [L,L2] = two_languages(),
+
   Encoded = encode(L),
   Decoded = decode(Encoded), 
 
@@ -99,15 +100,25 @@ encode_decode_language_test() ->
   ?assert(<<"español"/utf8>> =:= Decoded#wc_language.name),
   ?assert(<<"spanish">>      =:= Decoded2#wc_language.name).
 
-
-
 encode_decode_words_test() ->
   W1 = #wc_word{title = <<"flink">>, definition = <<"amable">>},
   W2 = #wc_word{title = <<"sød"/utf8>>, definition = <<"dulce">>},
  
   Encoded = encode([W1,W2]),
   Decoded = decode(Encoded),
-  A = hd(Encoded), B =tl(Decoded),
-  ?assert(A#wc_word.title =:= <<"flink">>),
-  ?assert(B#wc_word.title =:= <<"sød"/utf8>>).
 
+  ?assert([W1,W2] =:= Decoded).
+
+encode_decode_languages_test() ->
+    Ls = two_languages(),  
+
+    LsEncoded = wc_json:encode(Ls),
+    LsDecoded = wc_json:decode(LsEncoded),
+
+    ?assert(Ls =:= LsDecoded).
+
+
+two_languages() ->
+  L  = #wc_language{name = <<"español"/utf8>>, initials = <<"es">>, is_mother_language = true},
+  L2 = #wc_language{name = <<"spanish"/utf8>>, initials = <<"sp">>, is_mother_language = true},
+  [L,L2].

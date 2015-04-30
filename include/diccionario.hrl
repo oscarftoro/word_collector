@@ -1,14 +1,14 @@
 -record(wc_word,{
-  title            :: word_name(),
-  language         :: language_initials(),
-  definition       :: word_definition(),
-  status           :: pasive | active | undefined,
-  priority         :: high | medium | low | undefined,
-  examples         :: binary() | undefined,
-  locations   = [] :: [{datetime(),location()}] | [],
-  photos      = [] :: [photos] | [],
-  date_time        :: datetime(),
-  available        :: boolean()
+  title                          :: word_name(),
+  language    = <<"dk">>         :: language_initials(),
+  definition                     :: word_definition(),
+  status      = <<"pasive">>     :: binary(),
+  priority    = <<"medium">>     :: binary(),
+  examples    = <<"undefined">>  :: binary(),
+  locations   = []               :: [{datetime(),location()}] | [],
+  photos      = []               :: [photos] | [],
+  date_time   = []               :: datetime(),
+  available   = true             :: boolean()
 	
 }).
 
@@ -21,7 +21,7 @@
 -type word_name()          :: binary().
 -type word_definition()    :: binary().
 -type datetime()           :: [integer()].
--type language_name()      :: binary() | undefined.
+-type language_name()      :: binary().
 -type language_initials()  :: binary().
 -type is_mother_language() :: boolean().
 -type language()           :: {language_name(),language_initials(),is_mother_language()}.
