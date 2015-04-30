@@ -8,6 +8,7 @@
 -ifdef(debug_flag).
 -define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
 -else.
+
 -define(DEBUG(X),void).
 -endif.
 
@@ -21,13 +22,13 @@ encode(#wc_word{} = Rec) ->
 encode(#wc_language{} = Rec) ->
   jiffy:encode({[{language,{record_to_proplist(Rec)}}]});
 
-%% endcode lists of words
+%% Endcode lists of word or language records
 encode(Ls)-> 
   Head = hd(Ls),
 
   if is_record(Head,wc_word) ->
     encode_list_of_words(Ls);
-  true -> %read it as else 
+  true -> %read it as else
     encode_list_of_langs(Ls)
   end.
 
@@ -75,11 +76,34 @@ one_record_decoder(PL,L, Rec) ->
   lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Rec,Formated). 
 
 list_of_records_decoder(TD) ->
-  ?DEBUG(TD),
+  
+  {Item} = hd(TD),
+  %?DEBUG(Item),
+  case  is_language_proplist(Item) of
+    true ->
+      decode_list_of_langs(TD);
+    false -> 
+      decode_list_of_words(TD)
+  end.  
+ 
+
+decode_list_of_words(TD)->
   PLs = [PL || {PL} <-TD],
   [one_record_decoder(PL,lists:seq(2,11),#wc_word{}) ||
-    PL <- PLs].
-  
+  PL <- PLs].
+decode_list_of_langs(TD) ->
+  PLs = [PL || {PL} <-TD],
+  [one_record_decoder(PL,lists:seq(2,4),#wc_language{}) ||
+  PL <- PLs].
+
+
+%% helper functions to decode
+%% it checks that the prop list has an element
+%%  <<"name">>
+%% Returns true or false
+is_language_proplist(PL) ->
+    Keys = proplists:get_keys(PL),
+    lists:member(<<"name">>,Keys).
     
 -spec record_to_proplist(#wc_word{}) -> [{atom(),any()}].
 record_to_proplist(#wc_word{} = Rec) ->

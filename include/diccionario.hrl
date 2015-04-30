@@ -2,8 +2,8 @@
   title                          :: word_name(),
   language    = <<"dk">>         :: language_initials(),
   definition                     :: word_definition(),
-  status      = <<"pasive">>     :: binary(),
-  priority    = <<"medium">>     :: binary(),
+  status      = <<"pasive">>     :: binary(),% or active
+  priority    = <<"medium">>     :: binary(),% high | medium | low
   examples    = <<"undefined">>  :: binary(),
   locations   = []               :: [{datetime(),location()}] | [],
   photos      = []               :: [photos] | [],
