@@ -39,9 +39,11 @@ handle_request(Req,State)->
 -spec handle_method(<<_:24,_:_*8>>,_,_)->{<<_:64,_:_*8>>,_,_}.
 handle_method(<<"GET">>,Req,State)->
   {AllBindings,_Req1} = cowboy_req:bindings(Req),
-  AllBindings,
-  io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,AllBindings]),
-  {<<"{\"rest\": \"Hello World!\"}">>,Req,State};
+  ?DEBUG(AllBindings),
+   
+  Words = get_resources(AllBindings),
+  ?DEBUG(Words),
+  {Words,Req,State};
 %to create a new Word
 handle_method(<<"PUT">>,Req,State) ->
   {AllBindings,_Req1} = cowboy_req:bindings(Req),
@@ -60,4 +62,24 @@ handle_put([{first,What}],Req) when What =:= <<"word">> ->
   ?DEBUG(Word_desc),
   {ok,atomic} = wc_backend:add_word(Word_title,Word_desc),
   <<"{\"result\": \"ok\"}">>.
+
+%%%%%%%%%%%%%%%%%%%%
+%%%REST RESOURCES%%%
+%%%%%%%%%%%%%%%%%%%%
+              
+get_resources([{what,<<"words">>}]) ->
+  Words = wc_backend:get_all_words(),
+  ?DEBUG(Words),
+  Result = wc_json:encode(Words),
+  ?DEBUG(Result),Result;
+ 
+get_resources([what,<<"languages">>]) ->
+    ok;
+
+get_resources([{item,ItemName},{what,<<"words">>}]) ->
+  ItemName,ok;
+		  
+get_resources([{item,ItemName},{what,<<"language">>}])->
+  ItemName,ok.		     
+		  
     
