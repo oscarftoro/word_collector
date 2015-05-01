@@ -15,7 +15,8 @@
 
 %% Encode Word or Language records to JSON
 %%
--spec encode(#wc_word{} | [#wc_word{}]) -> binary().
+-spec encode(#wc_word{} | [#wc_word{}] | #wc_language{} |
+ [#wc_language{}]) -> binary().
 encode(#wc_word{} = Rec) ->  
   jiffy:encode({[{word,{record_to_proplist(Rec)}}]});
 
@@ -105,10 +106,15 @@ is_language_proplist(PL) ->
     Keys = proplists:get_keys(PL),
     lists:member(<<"name">>,Keys).
     
--spec record_to_proplist(#wc_word{}) -> [{atom(),any()}].
+-spec record_to_proplist(#wc_word{}|#wc_language{}) -> 
+[{'available' | 'date_time' | 'definition' | 'examples' |
+ 'initials' | 'is_mother_language' | 'language' | 'locations' |
+ 'name' | 'photos' | 'priority' | 'status' | 'title','false' |
+ 'true' | 'undefined' | 'wc_language' | 'wc_word' | binary() |
+ ['photos' | integer() | {_,_}]}].
 record_to_proplist(#wc_word{} = Rec) ->
   lists:zip(record_info(fields,wc_word),   
-  tl(tuple_to_list(Rec)));
+  tl(tuple_to_list(Rec)));% the tail contains the record fields
 
 record_to_proplist(#wc_language{} = Rec) ->
   lists:zip(record_info(fields,wc_language),

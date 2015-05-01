@@ -53,17 +53,9 @@ check_db_exist(Node)->
 -spec add_word(undefined | binary(),undefined | binary()) -> {aborted,_} | {atomic,_ }.
 
 add_word(T,D) ->
-  W = #wc_word{
-    title=T,
-    language="dk",
-    definition=D,
-    status=pasive,
-    priority=medium,
-    examples=undefined,
-    photos=undefined,
-    date_time=calendar:local_time(),
-    available=true},
-    add_word(W).
+  W = #wc_word{title=T,definition=D},
+  add_word(W).
+
 -spec add_word(#wc_word{}) -> {'aborted',_} | {'atomic',_}.
 add_word(W) ->
   F = fun() ->
