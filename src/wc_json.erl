@@ -1,6 +1,9 @@
 %% -*- coding: utf-8 -*-
 -module(wc_json).
--export([encode/1,decode/1,record_to_proplist/1]).
+-export([encode/1,
+         decode/1,
+         decode_from_web/1,
+         record_to_proplist/1]).
 
 -include_lib("eunit/include/eunit.hrl").
 -include("../include/diccionario.hrl").
@@ -62,6 +65,15 @@ decode(Bin) ->
   <<"languages">> -> 
     list_of_records_decoder(ToDecode)
   end.
+
+%% Decode with jiffy and return a tuple
+%% {Type,PropList} where Type can be word, words, language
+%% or languages. P
+decode_from_web(Bin) ->
+  {[{Type,{PList}}]} = jiffy:decode(Bin),
+  {Type,PList}.
+       
+    
 
 %% Auxiliar funtion that performs decoding of PropList.
 %% Takes a Properlist with key/values of the record(PL)
