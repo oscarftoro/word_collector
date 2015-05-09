@@ -129,21 +129,25 @@ all() ->
 %% Config0 = Config1 = [tuple()]
 %% Reason = term()
 %% Comment = term()
+%% PUT a JSON Word {"title":"pip","definition":"pajarito"}
+%% on wc/words 
 %% @end
 %%--------------------------------------------------------------------
-add_a_word_api_test(_Config) -> 
-  {ok,StatusCode,RespHeaders,ClientRef} = hackney:request(post,
-  <<"localhost:8080/wc/words?name=\"ord\"&description=\"palabra\"">>,
-  [],<<>>,[]),
-  415 = StatusCode, 
-  [{<<"connection">>,<<"keep-alive">>},
-   {<<"server">>,<<"Cowboy">>},
-   {<<"date">>,_},
-   {<<"content-length">>,<<"0">>},
-   {<<"content-type">>,<<"application/json">>}]   = RespHeaders,
-  {ok, Body} = hackney:body(ClientRef),
-  <<>> = Body,
-  ok.
+add_a_word_api_test(Config) -> 
+  Method     = put,
+  URL        = <<"localhost:8080/wc/words">>,
+  ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
+  Payload    = << "{\"title\": \"pip\",\"definition\": \"pajarito\"}" >>,
+
+  {ok,_StatusCode,_RespHeaders,ClientRef} = 
+    hackney:request(Method,URL,ReqHeaders,Payload,[]),
+  
+  {ok,Body}  = hackney:body(ClientRef),
+
+  <<"{\"atomic\":\"ok\"}">> = Body,
+  [Pip]      = wc_backend:find_word("pip"),
+  "pajarito" = Pip#wc_word.title,
+  Config.
 
 
    

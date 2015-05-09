@@ -85,7 +85,7 @@ init([]) ->
         {stop, Reason :: term(), Reply :: term(), NewState :: #state{}} |
         {stop, Reason :: term(), NewState :: #state{}}).
 handle_call({add_word,WordName,WordDefinition}, _From, State) ->
-        Reply = wc_mnesia:add_word(WordName,WordDefinition),
+        Reply = {[wc_mnesia:add_word(WordName,WordDefinition)]},
         {reply, Reply, State};
 handle_call({get_all_words},_From,State)->
         Reply = wc_mnesia:get_all_words(),

@@ -10,12 +10,14 @@
 -author("oscar").
 
 %% API
--export([init/3]).
--export([content_types_provided/2,
-	 allowed_methods/2,
-         content_types_accepted/2]).
--export([handle_request/2]).
--export([create_resource/2]).
+-export([ init/3]).
+-export([ content_types_provided/2,
+	  allowed_methods/2,
+          content_types_accepted/2]).
+-export([ handle_request/2]).
+-export([create_resource/2, 
+         is_conflict/2,
+         resource_exists/2]).
 -include("../include/diccionario.hrl").
 
 -ifdef(debug_flag).
@@ -35,7 +37,12 @@ content_types_provided(Req, State) ->
   {[{<<"application/json">>, handle_request}], Req, State}.
 
 content_types_accepted(Req, State) ->
-  {[{{<<"application">>, <<"x-www-form-urlencoded">>, []}, create_resource}],Req, State}.
+  {[{<<"application/json">>, create_resource}],Req, State}.
+
+resource_exists(Req, State) ->
+    {false,Req,State}.
+is_conflict(Req,State) ->
+    {false,Req,State}.
 
 handle_request(Req,State) ->
   handle_method(cowboy_req:get(method,Req),Req,State).
@@ -52,17 +59,21 @@ handle_method(<<"GET">>,Req,State)->
   ?DEBUG(Words),
   {Words,Req,State}.
 
-%% To create a new Word
-%%
+%% 
+%%To create a word we use PUT
 create_or_edit(<<"PUT">>,Req,State) ->
-  {AllBindings,_Req1} = cowboy_req:bindings(Req),
-  ?DEBUG(AllBindings),
-  {AllValues,Req2}   = cowboy_req:qs_vals(Req),
-  ?DEBUG(AllValues),
-  ?DEBUG(Req2),
-  Result = handle_put(AllBindings,Req),
-  {Result,Req,State};
+  {ok,Body,_Req0} = cowboy_req:body(Req),% get the Body
 
+  case  cowboy_req:bindings(Req) of
+    {[{what,<<"words">>}],_Req1}->
+      create_resource(Body,Req,State);
+    {[{what,<<"languages">>}],_Req1}->
+      unimplemented %edit_word(Body,Req,State)
+  end, 
+ 
+  {<<"hi">>,Req,State};
+%%
+%% To edit a word we use POST
 create_or_edit(<<"POST">>,Req,State) ->
    {AllBindings,_Req1} = cowboy_req:bindings(Req),
    ?DEBUG(AllBindings),  
@@ -70,14 +81,7 @@ create_or_edit(<<"POST">>,Req,State) ->
    ?DEBUG(AllValues),
    {<<"That was a POST">>,Req,State}.
 
-    
-handle_put([{first,What}],Req) when What =:= <<"word">> ->
-  {Word_title,_Req} = cowboy_req:qs_val(<<"title">>,Req), 
-  ?DEBUG(Word_title),
-  {Word_desc,_Req1} = cowboy_req:qs_val(<<"definition">>,Req),
-  ?DEBUG(Word_desc),
-  {ok,atomic} = wc_backend:add_word(Word_title,Word_desc),
-  <<"{\"result\": \"ok\"}">>.
+
 
 %%%%%%%%%%%%%%%%%%%%
 %%%REST RESOURCES%%%
@@ -99,3 +103,21 @@ get_resource([{item,ItemName},{what,<<"language">>}])->
   ItemName,ok.		     
 		  
     
+create_resource(Body,Req,State)->
+  {Type,PList} = wc_json:decode_from_web(Body),
+  create(Type,PList,Req,State).
+
+create(<<"word">>,PList,Req,State)->
+  [Title,Definition] = 
+    [proplists:get_value(K,PList) || {K,_V} <- PList],
+  Result = wc_backend:add_word(Title,Definition),
+  Resp = jiffy:encode(Result),
+  {ok, Req2} = 
+    cowboy_req:reply(201,[{<<"server">>,<<"Apache">>}],Resp,Req),
+  
+  ?DEBUG(Resp),
+  ?DEBUG(Req2),
+  {Resp, Req2, State};
+      
+create(<<"language">>,_PList,_Req,_State) ->
+    unimplemented. 
