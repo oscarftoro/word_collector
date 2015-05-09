@@ -20,8 +20,8 @@ end_per_suite(_Config) ->
   ok.
 
 init_per_testcase(find_word_by_name,Config) ->
-  {atomic,ok} = wc_mnesia:add_word("blondine","rubia"),
-  {atomic,ok} = wc_mnesia:add_word("politi", "policia"),
+  {atomic,ok} = wc_mnesia:add_word(<<"blondine">>,<<"rubia">>),
+  {atomic,ok} = wc_mnesia:add_word(<<"politi">>,<<"policia">>),
   Config;
 
 init_per_testcase(_,Config)->
@@ -31,8 +31,8 @@ end_per_testcase(_Rest,_Config)->
   ok.
 %% cases
 add_word(_Config) ->
-  {atomic,ok} = wc_mnesia:add_word("kat","gato"),
-  {atomic,ok} = wc_mnesia:add_word("robot","robot").
+  {atomic,ok} = wc_mnesia:add_word(<<"kat">>,<<"gato">>),
+  {atomic,ok} = wc_mnesia:add_word(<<"robot">>,<<"robot">>).
 
 get_all_words(_Config) ->
   Result = wc_mnesia:get_all_words(),
@@ -40,28 +40,28 @@ get_all_words(_Config) ->
   
     
 find_word_by_name(_Config) ->
-  [Word]   = wc_mnesia:find_word("kat"),
-  [Robot]  = wc_mnesia:find_word("robot"),
-  [Rubia]  = wc_mnesia:find_word("blondine"),
-  []       = wc_mnesia:find_word("køre"),
-  [Politi] = wc_mnesia:find_word("politi"),
+  [Word]   = wc_mnesia:find_word(<<"kat">>),
+  [Robot]  = wc_mnesia:find_word(<<"robot">>),
+  [Rubia]  = wc_mnesia:find_word(<<"blondine">>),
+  []       = wc_mnesia:find_word(<<"køre">>),
+  [Politi] = wc_mnesia:find_word(<<"politi">>),
     
-  "kat"     = Word#wc_word.title,
-  "dk"      =  Robot#wc_word.language,
-  "rubia"   = Rubia#wc_word.definition,
-  "policia" = Politi#wc_word.definition.
+  <<"kat">>     = Word#wc_word.title,
+  <<"dk">>      = Robot#wc_word.language,
+  <<"rubia">>   = Rubia#wc_word.definition,
+  <<"policia">> = Politi#wc_word.definition.
 get_all_words2(_Config) ->    
   Result = wc_mnesia:get_all_words(),
   4 = length(Result).
 
 edit_word(_Config) ->
-  {atomic,ok}   = wc_mnesia:edit_word("kat",definition,"gato o gata"),
-  [Result]      = wc_mnesia:find_word("kat"),
-  "gato o gata" = Result#wc_word.definition.
+  {atomic,ok}   = wc_mnesia:edit_word(<<"kat">>,definition,<<"gato o gata">>),
+  [Result]      = wc_mnesia:find_word(<<"kat">>),
+  <<"gato o gata">> = Result#wc_word.definition.
   
 delete_word(_Config) ->
-  {atomic,ok} = wc_mnesia:delete_word("kat"),
-  [Kat]       = wc_mnesia:find_word("kat"),% the word is found because as facebook, we do not delete things! we just disable them.
+  {atomic,ok} = wc_mnesia:delete_word(<<"kat">>),
+  [Kat]       = wc_mnesia:find_word(<<"kat">>),% the word is found because as facebook, we do not delete things! we just disable them.
   false       = Kat#wc_word.available.
   
 
