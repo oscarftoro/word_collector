@@ -28,7 +28,7 @@
 
 -define(SERVER, ?MODULE).
 
--export([add_word/2,get_all_words/0,delete_word/1,edit_word/3,
+-export([add_word/2,get_all_words/0,delete_word/1,edit_word/2,
 	find_word/1]).
 
 -record(state, {}).
@@ -93,8 +93,8 @@ handle_call({get_all_words},_From,State)->
 handle_call({delete_word,WordName},_From,State) ->
     Reply = wc_mnesia:delete_word(WordName),
     {reply,Reply,State};
-handle_call({edit_word,WordName,Item,NewValue},_From,State) ->
-    Reply = wc_mnesia:edit_word(WordName,Item,NewValue),
+handle_call({edit_word,WordName,PropList},_From,State) ->
+    Reply = wc_mnesia:edit_word(WordName,PropList),
     {reply,Reply,State};
 handle_call({find_word,WordName},_From,State) ->
     Reply = wc_mnesia:find_word(WordName),% a reply can be a list of words
@@ -182,9 +182,9 @@ delete_word(WordName)->
 %% status, priority,examples, locations, photos, 
 %% date_time, available
 %% Newvalue is of course the new value as string
--spec edit_word(binary(),atom(),binary())->{ok,atom} |{error,string()}.
-edit_word(WordName,Item,NewValue)->
-    gen_server:call(?MODULE,{edit_word,WordName, Item,NewValue}).
+-spec edit_word(binary(),{atom(),binary() | boolean()| []|[binary()],[integer()]})->{ok,atom} |{error,string()}.
+edit_word(WordName,PropList)->
+    gen_server:call(?MODULE,{edit_word,WordName,PropList}).
 
 find_word(WordName)->    
     gen_server:call(?MODULE,{find_word,WordName}).

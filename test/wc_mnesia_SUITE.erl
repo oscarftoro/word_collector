@@ -55,7 +55,7 @@ get_all_words2(_Config) ->
   4 = length(Result).
 
 edit_word(_Config) ->
-  {atomic,ok}   = wc_mnesia:edit_word(<<"kat">>,definition,<<"gato o gata">>),
+  {atomic,ok}   = wc_mnesia:edit_word(<<"kat">>,[{definition,<<"gato o gata">>}]),
   [Result]      = wc_mnesia:find_word(<<"kat">>),
   <<"gato o gata">> = Result#wc_word.definition.
   

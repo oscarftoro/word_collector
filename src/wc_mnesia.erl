@@ -85,13 +85,12 @@ find_word(W) ->
 %% second parameter is the element to be edited
 %% third value is a string with the new value
    
--spec edit_word(binary(),any())-> {atomic,_} | {aborted,_}.
-
+-spec edit_word(binary(),{atom(),binary() | boolean()| []|[binary()],[integer()]})-> {ok,atom} |{error,string()}.
 edit_word(W,PropList)->
   [Word] = find_word(W),
   NewW =edit_word_helper(Word,PropList),
   add_word(NewW).
-
+%% recursively 
 edit_word_helper(Word,PropList)->
   lists:foldr(fun({Index,NewValue},Acc)-> 
     setelement(translate_index(Index),Acc,NewValue)    
