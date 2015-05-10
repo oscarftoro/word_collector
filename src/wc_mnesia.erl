@@ -81,16 +81,19 @@ find_word(W) ->
   wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).
 
 %% 
-%% first parameter is the record to be edited, 
-%% second parameter is the element to be edited
-%% third value is a string with the new value
+%% first parameter is the name(binary) to be edited, 
+%% second parameter is a list of tuples containing
+%% changes. For example: 
+%% [{status,<<"pasive">>},{definition,<<"new definition">>},
+%% {priority,<<"high">>}]
    
 -spec edit_word(binary(),{atom(),binary() | boolean()| []|[binary()],[integer()]})-> {ok,atom} |{error,string()}.
 edit_word(W,PropList)->
   [Word] = find_word(W),
   NewW =edit_word_helper(Word,PropList),
   add_word(NewW).
-%% recursively 
+
+%% dinamically edit the record to be updated
 edit_word_helper(Word,PropList)->
   lists:foldr(fun({Index,NewValue},Acc)-> 
     setelement(translate_index(Index),Acc,NewValue)    
