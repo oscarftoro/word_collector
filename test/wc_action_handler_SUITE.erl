@@ -1,8 +1,8 @@
 %%%-------------------------------------------------------------------
-%%% @author oscar_toro <oscar@cph-itlab.dk>
+%%% @author oscar_toro <oscar>
 %%% @copyright (C) 2015, oscar
 %%% @doc
-%%%
+%%% Integration test 
 %%% @end
 %%% Created : 19 Mar 2015 by oscar <oscar@oscar-K52Dr>
 %%%-------------------------------------------------------------------
@@ -31,7 +31,7 @@ init_per_suite(Config) ->
   wc_mnesia:install(),
   word_collector_app:start(),
   hackney:start(),  
-    Config.
+  Config.
 
 %%--------------------------------------------------------------------
 %% @spec end_per_suite(Config0) -> void() | {save_config,Config1}
@@ -52,7 +52,7 @@ end_per_suite(_Config) ->
 %% @end
 %%--------------------------------------------------------------------
 init_per_group(_GroupName, Config) ->
-    Config.
+  Config.
 
 %%--------------------------------------------------------------------
 %% @spec end_per_group(GroupName, Config0) ->
@@ -62,7 +62,7 @@ init_per_group(_GroupName, Config) ->
 %% @end
 %%--------------------------------------------------------------------
 end_per_group(_GroupName, _Config) ->
-    ok.
+  ok.
 
 %%--------------------------------------------------------------------
 %% @spec init_per_testcase(TestCase, Config0) ->
@@ -74,7 +74,7 @@ end_per_group(_GroupName, _Config) ->
 %%--------------------------------------------------------------------
 init_per_testcase(_TestCase, Config) ->
  
-   Config.
+  Config.
 
 %%--------------------------------------------------------------------
 %% @spec end_per_testcase(TestCase, Config0) ->
@@ -140,8 +140,7 @@ add_a_word_api_test(Config) ->
   Payload    = << "{\"title\": \"pip\",\"definition\": \"pajarito\"}" >>,
 
   {ok,_StatusCode,_RespHeaders,ClientRef} = 
-    hackney:request(Method,URL,ReqHeaders,Payload,[]),
-  
+    hackney:request(Method,URL,ReqHeaders,Payload,[]), 
   {ok,Body}  = hackney:body(ClientRef),
 
   <<"{\"atomic\":\"ok\"}">> = Body,
@@ -149,6 +148,31 @@ add_a_word_api_test(Config) ->
   "pajarito" = Pip#wc_word.title,
   Config.
 
+%%--------------------------------------------------------------------
+%% @spec find_a_word_test(Config0) ->
+%%   ok | exit() | {skip,Reason} | {comment,Comment} |
+%%   {save_config,Config1} | {skip_and_save,Reason,Config1}
+%% Config0 = Config1 = [tuple()]
+%% Reason = term()
+%% Comment = term()
+%% Find a word (or Retrieve): GET wc/words/word_title
+%% @end
+%%--------------------------------------------------------------------
 
+find_a_word_test(Config)->
+  Method  = get, 
+  URL     = <<"localhost:8080/wc/words/pip">>,  
+  Headers = [],
+  Payload = <<>>,
+  Options = [],
+
+  {ok, _StatusCode, _RespHeaders,ClientRef} =
+    hackney:request(Method,URL,Headers, Payload, Options),
+  {ok,Body} = hackney:body(ClientRef),
+  Word = wc_json:decode(Body),
+
+  <<"pip">> = Word#wc_word.title,
+  Config. 
+    
    
     
