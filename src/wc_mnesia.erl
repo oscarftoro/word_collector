@@ -12,8 +12,9 @@
 -include_lib("stdlib/include/qlc.hrl").
 %% API
 -export([check_db_exist/1,install/1,install/0]).
--export([add_word/2,get_all_words/0,do/1,find_word/1,edit_word/3,
-	delete_word/1,get_deleted_words/0,remove_word/1]).
+-export([add_word/2,get_all_words/0,do/1,find_word/1,   
+         edit_word/2,delete_word/1,get_deleted_words/0,
+         remove_word/1]).
 % exported only for tests purppose, 
 % delete when we are done with db implementation
 -export([add_word/1]).
@@ -70,27 +71,31 @@ add_word(W) ->
 get_all_words() ->
   do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= true])).
 
+-spec get_deleted_words() -> [#wc_word{}] | [].
 get_deleted_words() ->
   do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= false])).
 %% find word by word name
-%% remember you get a list of results!!!
+%% remember, you get a list of results!!!
 -spec find_word(string()) -> [#wc_word{}] | [].
 find_word(W) ->
   wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).
 
-%edit word! 
+%% 
 %% first parameter is the record to be edited, 
 %% second parameter is the element to be edited
 %% third value is a string with the new value
    
--spec edit_word(string(),available | date_time | definition     
-  |examples | language | locations | photos | priority | status 
-  |title,string() | true | false)-> {atomic,_} | {aborted,_}.
+-spec edit_word(binary(),any())-> {atomic,_} | {aborted,_}.
 
-edit_word(W,Index,NewValue)->
+edit_word(W,PropList)->
   [Word] = find_word(W),
-  NewW =setelement(translate_index(Index),Word,NewValue),
+  NewW =edit_word_helper(Word,PropList),
   add_word(NewW).
+
+edit_word_helper(Word,PropList)->
+  lists:foldr(fun({Index,NewValue},Acc)-> 
+    setelement(translate_index(Index),Acc,NewValue)    
+  end,Word,PropList).
 
 -spec translate_index(atom()) -> integer().
 
@@ -107,7 +112,7 @@ translate_index(available)  -> 11.
 
 -spec delete_word(string()) ->  {atomic,_} | {aborted,_}.
 delete_word(WordName)->
-  edit_word(WordName,available,false).
+  edit_word(WordName,[{available,false}]).
 
 remove_word(WordName)->
   Oid = {wc_word,WordName},
@@ -118,7 +123,7 @@ remove_word(WordName)->
 
 %% Evaluate qlc queries of type:
 %% qlc:q(query()).
-%% query() = [Something|| Something <- mnesia:table(SomeTable),Predicate]
+%% query() = [Something || Something <- mnesia:table(SomeTable),Predicate]
 do(Q) ->
   F = fun()->qlc:e(Q) end,
   {atomic,Val} = mnesia:transaction(F),
