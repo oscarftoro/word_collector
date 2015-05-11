@@ -39,9 +39,8 @@ init_per_suite(Config) ->
 %% @end
 %%--------------------------------------------------------------------
 end_per_suite(_Config) ->
-  application:stop(word_collector),
-  application:stop(sasl),
-  hackney:stop(),
+
+ 
   ok.
 
 %%--------------------------------------------------------------------
