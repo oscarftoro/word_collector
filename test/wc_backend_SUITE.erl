@@ -31,6 +31,8 @@ init_per_group(_,Config) ->
   Config.
 
 end_per_group(getAllDelete,Config) ->
+  wc_mnesia:remove_word(<<"peter">>),
+  wc_mnesia:remove_word(<<"mobiltelefon">>),
   Config;
 
 end_per_group(addFind,Config)->
