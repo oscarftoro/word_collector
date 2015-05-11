@@ -25,14 +25,12 @@ install(Nodes) ->
   {[_Any],_AtomList} = rpc:multicall(Nodes, application,start, [mnesia]),
         
   mnesia:create_table(wc_word, 
-  [{type,set},
-  %{record_name, wc_word},
-  {attributes, record_info(fields, wc_word)},
-  {disc_copies, Nodes}]),
+    [{type,set},
+    {attributes, record_info(fields, wc_word)},
+    {disc_copies, Nodes}]),
 
   mnesia:create_table(wc_language,
     [{type,set},
-    %{record_name,wc_language},
     {attributes, record_info(fields, wc_language)},
     {disc_copies, Nodes}]),
     rpc:multicall(Nodes,application,stop,[mnesia]).
@@ -51,7 +49,7 @@ check_db_exist(Node)->
 
 %% add word to the collection
 %% T is title whereas D is definition
--spec add_word(undefined | binary(),undefined | binary()) -> {aborted,_} | {atomic,_ }.
+-spec add_word(undefined | binary(),undefined | binary()) -> {'aborted',_} | {'atomic',_ }.
 
 add_word(T,D) ->
   W = #wc_word{title=T,definition=D},
@@ -76,18 +74,19 @@ get_deleted_words() ->
   do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= false])).
 %% find word by word name
 %% remember, you get a list of results!!!
--spec find_word(string()) -> [#wc_word{}] | [].
+-spec find_word(binary()) -> [#wc_word{}] | [].
 find_word(W) ->
   wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).
 
 %% 
-%% first parameter is the name(binary) to be edited, 
+%% first parameter is the name(binary()) of the word to be edited, 
 %% second parameter is a list of tuples containing
 %% changes. For example: 
 %% [{status,<<"pasive">>},{definition,<<"new definition">>},
 %% {priority,<<"high">>}]
    
--spec edit_word(binary(),{atom(),binary() | boolean()| []|[binary()],[integer()]})-> {ok,atom} |{error,string()}.
+-spec edit_word(binary(),[{atom(),binary() | boolean() |
+ [] | [binary()],[integer()]}])-> {'aborted',_} | {'atomic',_}.
 edit_word(W,PropList)->
   [Word] = find_word(W),
   NewW =edit_word_helper(Word,PropList),
@@ -112,7 +111,7 @@ translate_index(photos)     -> 9;
 translate_index(date_time)  -> 10;
 translate_index(available)  -> 11.
 
--spec delete_word(string()) ->  {atomic,_} | {aborted,_}.
+-spec delete_word(binary()) ->  no_return().
 delete_word(WordName)->
   edit_word(WordName,[{available,false}]).
 

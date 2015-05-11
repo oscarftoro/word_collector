@@ -91,10 +91,10 @@ handle_call({get_all_words},_From,State)->
         Reply = wc_mnesia:get_all_words(),
     {reply,Reply,State};
 handle_call({delete_word,WordName},_From,State) ->
-    Reply = wc_mnesia:delete_word(WordName),
+    Reply = {[wc_mnesia:delete_word(WordName)]},
     {reply,Reply,State};
 handle_call({edit_word,WordName,PropList},_From,State) ->
-    Reply = wc_mnesia:edit_word(WordName,PropList),
+    Reply = {[wc_mnesia:edit_word(WordName,PropList)]},
     {reply,Reply,State};
 handle_call({find_word,WordName},_From,State) ->
     Reply = wc_mnesia:find_word(WordName),% a reply can be a list of words

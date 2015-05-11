@@ -30,7 +30,7 @@ suite() ->
 init_per_suite(Config) ->
   wc_mnesia:install(),
   word_collector_app:start(),
-  hackney:start(),  
+  hackney:start(),
   Config.
 
 %%--------------------------------------------------------------------
@@ -39,7 +39,8 @@ init_per_suite(Config) ->
 %% @end
 %%--------------------------------------------------------------------
 end_per_suite(_Config) ->
-  word_collector_app:stop(),
+  application:stop(word_collector),
+  application:stop(sasl),
   hackney:stop(),
   ok.
 
@@ -112,7 +113,7 @@ groups() ->
 %% @end
 %%--------------------------------------------------------------------
 all() -> 
-    [add_a_word_api_test].
+    [add_a_word_api_test,find_a_word_api_test].
 
 %%--------------------------------------------------------------------
 %% @spec TestCase() -> Info
@@ -134,18 +135,18 @@ all() ->
 %% @end
 %%--------------------------------------------------------------------
 add_a_word_api_test(Config) -> 
-  Method     = put,
-  URL        = <<"localhost:8080/wc/words">>,
+   URL        = <<"localhost:8080/wc/words">>,
   ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
-  Payload    = << "{\"title\": \"pip\",\"definition\": \"pajarito\"}" >>,
+  ReqBody    = <<"{\"word\":{\"title\": \"fuld\",\"definition\": \"curao\"}}">>,
 
   {ok,_StatusCode,_RespHeaders,ClientRef} = 
-    hackney:request(Method,URL,ReqHeaders,Payload,[]), 
+    hackney:request(put,URL,ReqHeaders,ReqBody), 
   {ok,Body}  = hackney:body(ClientRef),
-
   <<"{\"atomic\":\"ok\"}">> = Body,
-  [Pip]      = wc_backend:find_word("pip"),
-  "pajarito" = Pip#wc_word.title,
+ 
+  [Fuld]       = wc_backend:find_word(<<"fuld">>),
+
+  <<"curao">> = Fuld#wc_word.definition,
   Config.
 
 %%--------------------------------------------------------------------
@@ -159,20 +160,22 @@ add_a_word_api_test(Config) ->
 %% @end
 %%--------------------------------------------------------------------
 
-find_a_word_test(Config)->
-  Method  = get, 
-  URL     = <<"localhost:8080/wc/words/pip">>,  
-  Headers = [],
-  Payload = <<>>,
-  Options = [],
+find_a_word_api_test(Config)->
 
-  {ok, _StatusCode, _RespHeaders,ClientRef} =
-    hackney:request(Method,URL,Headers, Payload, Options),
-  {ok,Body} = hackney:body(ClientRef),
+  URL        = <<"localhost:8080/wc/words">>,
+  ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
+  Payload    = << "{\"word\":{\"title\": \"pip\",\"definition\": \"pajarito\"}}" >>,
+
+  {ok,_StatusCode,_RespHeaders,ClientRef} = 
+    hackney:request(put,URL,ReqHeaders,Payload,[]), 
+
+
+  URL2     = <<"localhost:8080/wc/words/pip">>,  
+
+  {ok, _StatusCode2, _RespHeaders2,ClientRef2} =
+    hackney:request(get,URL2,[], <<>>, []),
+  {ok,Body} = hackney:body(ClientRef2),
   Word = wc_json:decode(Body),
 
   <<"pip">> = Word#wc_word.title,
   Config. 
-    
-   
-    

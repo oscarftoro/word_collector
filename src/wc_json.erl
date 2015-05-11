@@ -3,6 +3,7 @@
 -export([encode/1,
          decode/1,
          decode_from_web/1,
+         testy/0,
          record_to_proplist/1]).
 
 -include_lib("eunit/include/eunit.hrl").
@@ -179,3 +180,18 @@ two_languages() ->
   L  = #wc_language{name = <<"español"/utf8>>, initials = <<"es">>, is_mother_language = true},
   L2 = #wc_language{name = <<"spanish"/utf8>>, initials = <<"sp">>, is_mother_language = true},
   [L,L2].
+
+testy() ->   
+  URL        = <<"localhost:8080/wc/words">>,
+  ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
+  ReqBody    = <<"{\"word\":{\"title\": \"fuld\",\"definition\": \"curao\"}}">>,
+
+  {ok,_StatusCode,_RespHeaders,ClientRef} = 
+    hackney:request(put,URL,ReqHeaders,ReqBody), 
+  {ok,Body}  = hackney:body(ClientRef),
+  ?DEBUG(Body),
+  <<"{\"atomic\":\"ok\"}">> = Body,
+ 
+  [Pip]       = wc_backend:find_word(<<"fuld">>),
+  ?DEBUG(Pip),
+  <<"curao">> = Pip#wc_word.definition.
