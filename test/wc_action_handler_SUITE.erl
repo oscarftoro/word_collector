@@ -40,7 +40,6 @@ init_per_suite(Config) ->
 %%--------------------------------------------------------------------
 end_per_suite(_Config) ->
 
- 
   ok.
 
 %%--------------------------------------------------------------------
@@ -73,8 +72,7 @@ end_per_group(_GroupName, _Config) ->
 %% @end
 %%--------------------------------------------------------------------
 init_per_testcase(_TestCase, Config) ->
- 
-  Config.
+ Config.
 
 %%--------------------------------------------------------------------
 %% @spec end_per_testcase(TestCase, Config0) ->
@@ -84,8 +82,13 @@ init_per_testcase(_TestCase, Config) ->
 %% Reason = term()
 %% @end
 %%--------------------------------------------------------------------
+end_per_testcase(find_a_word_api_test,Config) ->
+ wc_mnesia:remove_word(<<"fuld">>),
+  wc_mnesia:remove_word(<<"pip">>),
+  Config;
 end_per_testcase(_TestCase, _Config) ->
     ok.
+
 
 %%--------------------------------------------------------------------
 %% @spec groups() -> [Group]
@@ -165,7 +168,7 @@ find_a_word_api_test(Config)->
   ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
   Payload    = << "{\"word\":{\"title\": \"pip\",\"definition\": \"pajarito\"}}" >>,
 
-  {ok,_StatusCode,_RespHeaders,ClientRef} = 
+  {ok,_StatusCode,_RespHeaders,_ClientRef} = 
     hackney:request(put,URL,ReqHeaders,Payload,[]), 
 
 

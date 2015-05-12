@@ -6,20 +6,25 @@
   end_per_testcase/2,  all/0,add_word/1,
   get_all_words/1,get_all_words2/1,find_word_by_name/1, 
   edit_word/1,delete_word/1]).
-
+-define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
 all() ->  
   [add_word,get_all_words,find_word_by_name,
   get_all_words2,edit_word,delete_word].
 
 init_per_suite(Config) ->
-  word_collector_app:start(),
+
   Config.
 
 end_per_suite(_Config) ->
+  
+  application:stop(sasl),
+  hackney:stop(),
+  word_collector_app:stop(),
   application:stop(mnesia),
   ok.
 
 init_per_testcase(find_word_by_name,Config) ->
+  
   {atomic,ok} = wc_mnesia:add_word(<<"blondine">>,<<"rubia">>),
   {atomic,ok} = wc_mnesia:add_word(<<"politi">>,<<"policia">>),
   Config;
@@ -36,7 +41,8 @@ add_word(_Config) ->
 
 get_all_words(_Config) ->
   Result = wc_mnesia:get_all_words(),
-  2 = length(Result).
+  ?DEBUG(Result),
+  2 = length(Result). %% kat and robot
   
     
 find_word_by_name(_Config) ->

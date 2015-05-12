@@ -65,17 +65,17 @@ find_word_test(Config) ->
 
 get_all_words_test(Config)->
   Result = wc_backend:get_all_words(),
-  4 = length(Result),
+  2 = length(Result),
   wc_backend:add_word(<<"uge">>, <<"semana">>),
   Result2 = wc_backend:get_all_words(),
-  5 = length(Result2),
+  3 = length(Result2),
   Config.
 
 %todo: check that available is false
 delete_words_test(_Config)->
   wc_backend:delete_word(<<"peter">>),
-  3 = length(wc_backend:get_all_words()),
+  1 = length(wc_backend:get_all_words()),
   wc_backend:delete_word(<<"mobiltelefon">>),
-  2 = length(wc_backend:get_all_words()).
+  0 = length(wc_backend:get_all_words()).
  
     
