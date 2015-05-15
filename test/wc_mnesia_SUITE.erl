@@ -6,7 +6,7 @@
   end_per_testcase/2,  all/0,add_word/1,
   get_all_words/1,get_all_words2/1,find_word_by_name/1, 
   edit_word/1,delete_word/1]).
--define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
+
 all() ->  
   [add_word,get_all_words,find_word_by_name,
   get_all_words2,edit_word,delete_word].
@@ -41,7 +41,7 @@ add_word(_Config) ->
 
 get_all_words(_Config) ->
   Result = wc_mnesia:get_all_words(),
-  ?DEBUG(Result),
+  
   2 = length(Result). %% kat and robot
   
     
@@ -67,7 +67,11 @@ edit_word(_Config) ->
   
 delete_word(_Config) ->
   {atomic,ok} = wc_mnesia:delete_word(<<"kat">>),
-  [Kat]       = wc_mnesia:find_word(<<"kat">>),% the word is found because as facebook, we do not delete things! we just disable them.
+  []       = wc_mnesia:find_word(<<"kat">>),% the word is not found
+  [Kat]    = wc_mnesia:find_word_all(<<"kat">>),
+  %in this case the word is founded because we as facebook do not
+  %delete information but instead we deprecate data,
+  %{available=false} 
   false       = Kat#wc_word.available.
   
 

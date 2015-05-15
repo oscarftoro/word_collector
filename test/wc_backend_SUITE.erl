@@ -9,6 +9,7 @@
 %% tests
 -export([add_word_test/1,find_word_test/1,
   get_all_words_test/1,delete_words_test/1]).
+-define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
 all()->
     [{group,addFind},{group,getAllDelete}].
 
@@ -65,7 +66,9 @@ find_word_test(Config) ->
 
 get_all_words_test(Config)->
   Result = wc_backend:get_all_words(),
+  ?DEBUG(Result),
   2 = length(Result),
+  
   wc_backend:add_word(<<"uge">>, <<"semana">>),
   Result2 = wc_backend:get_all_words(),
   3 = length(Result2),
@@ -78,4 +81,3 @@ delete_words_test(_Config)->
   wc_backend:delete_word(<<"mobiltelefon">>),
   0 = length(wc_backend:get_all_words()).
  
-    

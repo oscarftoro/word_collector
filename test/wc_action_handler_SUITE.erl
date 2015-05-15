@@ -12,6 +12,7 @@
 
 -include_lib("common_test/include/ct.hrl").
 -include("../include/diccionario.hrl").
+
 %%--------------------------------------------------------------------
 %% @spec suite() -> Info
 %% Info = [tuple()]
@@ -72,7 +73,7 @@ end_per_group(_GroupName, _Config) ->
 %% @end
 %%--------------------------------------------------------------------
 init_per_testcase(_TestCase, Config) ->
- Config.
+  Config.
 
 %%--------------------------------------------------------------------
 %% @spec end_per_testcase(TestCase, Config0) ->
@@ -82,9 +83,9 @@ init_per_testcase(_TestCase, Config) ->
 %% Reason = term()
 %% @end
 %%--------------------------------------------------------------------
-end_per_testcase(find_a_word_api_test,Config) ->
+end_per_testcase(delete_a_word_api_test,Config) ->
  wc_mnesia:remove_word(<<"fuld">>),
-  wc_mnesia:remove_word(<<"pip">>),
+ wc_mnesia:remove_word(<<"pip">>),
   Config;
 end_per_testcase(_TestCase, _Config) ->
     ok.
@@ -115,7 +116,7 @@ groups() ->
 %% @end
 %%--------------------------------------------------------------------
 all() -> 
-    [add_a_word_api_test,find_a_word_api_test].
+    [add_a_word_api_test,find_a_word_api_test, delete_a_word_api_test].
 
 %%--------------------------------------------------------------------
 %% @spec TestCase() -> Info
@@ -137,7 +138,7 @@ all() ->
 %% @end
 %%--------------------------------------------------------------------
 add_a_word_api_test(Config) -> 
-   URL        = <<"localhost:8080/wc/words">>,
+  URL        = <<"localhost:8080/wc/words">>,
   ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
   ReqBody    = <<"{\"word\":{\"title\": \"fuld\",\"definition\": \"curao\"}}">>,
 
@@ -171,7 +172,6 @@ find_a_word_api_test(Config)->
   {ok,_StatusCode,_RespHeaders,_ClientRef} = 
     hackney:request(put,URL,ReqHeaders,Payload,[]), 
 
-
   URL2     = <<"localhost:8080/wc/words/pip">>,  
 
   {ok, _StatusCode2, _RespHeaders2,ClientRef2} =
@@ -181,3 +181,23 @@ find_a_word_api_test(Config)->
 
   <<"pip">> = Word#wc_word.title,
   Config. 
+
+delete_a_word_api_test(Config) ->
+  
+  URL  = <<"localhost:8080/wc/words/fuld">>,
+  {ok,_StatusCode,_RespHeaders,ClientRef} =
+    hackney:request(delete,URL,[],<<>>,[]),
+  {ok,Body} = hackney:body(ClientRef),
+ 
+  [] = wc_backend:find_word(<<"fuld">>),
+ % try again
+  {ok, _StatusCode2,_RespHeaders2_,ClientRef2} =
+    hackney:request(delete,<<"localhost:8080/wc/words/fuld">>,
+      [],<<>>,[]),
+   {ok,Body2} = hackney:body(ClientRef2),
+
+  <<"{\"atomic\":\"not_found\"}">> = Body2,
+
+  
+  Config.
+
