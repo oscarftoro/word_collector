@@ -7,7 +7,7 @@
 %%% Created : 14. Nov 2014 13:58
 %%%-------------------------------------------------------------------
 -module(wc_action_handler).
--author("oscar").
+-author("oscar_toro").
 
 %% API
 -export([ init/3]).
@@ -15,9 +15,10 @@
 	  allowed_methods/2,
           content_types_accepted/2]).
 -export([ handle_request/2]).
--export([ create_resource/2 
-        % is_conflict/2,
-        % resource_exists/2
+-export([ create_resource/2, 
+          delete_resource/2,
+          delete_completed/2
+          %resource_exists/2
        ]).
 -include("../include/diccionario.hrl").
 
@@ -42,11 +43,33 @@ content_types_provided(Req, State) ->
 content_types_accepted(Req, State) ->
   {[{<<"application/json">>, create_resource}],Req, State}.
 
-%% resource_exists(Req, State) ->
-%%   {false,Req,State}.
+%% for DELETE we have to implement the delete_resource callback
+delete_resource(Req,_State) ->
+  {Item,Req2} = cowboy_req:binding(item,Req),  
+  ?DEBUG(Item), 
+  case wc_backend:delete_word(Item) of
+    {[[]]} -> ?DEBUG(Item),{true,Req2,{[{atomic,not_found}]}};
+    {[{atomic,ok}]} -> ?DEBUG(Item),{true,Req2,{[{atomic,ok}]}}
+  end.% pass the result as state
 
-%% is_conflict(Req,State) ->
-%%   {false,Req,State}.
+%% return 200 when the word is deleted
+%% and 404 when the resource is not found
+delete_completed(Req,State) ->   
+  Response = jiffy:encode(State),% <<"{\"atomic\":\"ok\"}">>
+  ?DEBUG(Response),
+  case State of
+    {[{atomic,ok}]} ->
+      {ok, Req2} =       
+        cowboy_req:reply(200,[{<<"server">>,<<"Apache">>}],
+        Response,Req),
+      {true,Req2,State};
+    {[{atomic,not_found}]}->
+      {ok, Req2} =       
+        cowboy_req:reply(404,[{<<"server">>,<<"Apache">>}],
+        Response,Req),
+      {false,Req2,State}
+  end.
+       
 
 handle_request(Req,State) ->
   handle_method(cowboy_req:get(method,Req),Req,State).
@@ -126,11 +149,7 @@ create(<<"language">>,_PList,_Req,_State) ->
 %%%%%%%%%%%%%%%%%%%%%%
 %%auxiliar functions%%
 %%%%%%%%%%%%%%%%%%%%%%
- 
-%% -spec word_exists(binary())-> boolean().
-%% word_exists(WordName)->
-%%   ok.
-    
+     
 %% check whether the result is a list of several elements
 %% otherwise is going to encode the resource as one element
 %% 
@@ -141,6 +160,8 @@ encode_list(List) ->
        [L] = List,
 	  wc_json:encode(L);
     0 ->
-	  erlang:error("no words to encode. Error at line 146");  
+	  erlang:error("no words to encode. Error at encode_list @ wc_action_handler");  
     _ -> wc_json:encode(List)
   end.
+
+
