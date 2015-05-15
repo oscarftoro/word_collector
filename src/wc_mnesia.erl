@@ -14,6 +14,7 @@
 -export([check_db_exist/1,install/1,install/0]).
 -export([add_word/2,get_all_words/0,do/1,find_word/1,   
          edit_word/2,delete_word/1,get_deleted_words/0,
+         recover_word/1,
          remove_word/1]).
 % exported only for tests purppose, 
 % delete when we are done with db implementation
@@ -78,6 +79,9 @@ get_deleted_words() ->
 find_word(W) ->
   wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W, X#wc_word.available =:= true])).
 
+%% find word by name, including deleted words
+find_word_all(W)->
+   wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).    
 %% 
 %% first parameter is the name(binary()) of the word to be edited, 
 %% second parameter is a list of tuples containing
@@ -86,11 +90,28 @@ find_word(W) ->
 %% {priority,<<"high">>}]
    
 -spec edit_word(binary(),[{atom(),binary() | boolean() |
- [] | [binary()],[integer()]}])-> {'aborted',_} | {'atomic',_}.
+ [] | [binary()],[integer()]}])-> {'aborted',_} | {'atomic',_} | [].
+
+edit_word(W,[{available,false}]) ->
+  case find_word(W) of
+    [_Word] -> do_edit_word(W,[{available,false}]);
+    []      -> []
+  end;
+
 edit_word(W,PropList)->
-  [Word] = find_word(W),
+  do_edit_word(W,PropList).
+
+do_edit_word(W,PropList)->
+   [Word] = find_word(W),
   NewW =edit_word_helper(Word,PropList),
-  add_word(NewW).
+    add_word(NewW).
+
+%% recover deleted word
+%% to check deleted words call get_deleted_words()
+recover_word(W)->
+    [Word]  = find_word_all(W),
+    RecWord = edit_word_helper(Word,[{available,true}]), 
+    add_word(RecWord).
 
 %% dinamically edit the record to be updated
 edit_word_helper(Word,PropList)->
