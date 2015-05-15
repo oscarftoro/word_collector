@@ -76,7 +76,7 @@ get_deleted_words() ->
 %% remember, you get a list of results!!!
 -spec find_word(binary()) -> [#wc_word{}] | [].
 find_word(W) ->
-  wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).
+  wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W, X#wc_word.available =:= true])).
 
 %% 
 %% first parameter is the name(binary()) of the word to be edited, 
