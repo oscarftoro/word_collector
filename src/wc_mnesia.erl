@@ -102,9 +102,11 @@ edit_word(W,PropList)->
   do_edit_word(W,PropList).
 
 do_edit_word(W,PropList)->
-  [Word] = find_word(W),
-  NewW =edit_word_helper(Word,PropList),
-  add_word(NewW).
+  case find_word(W) of
+    [] -> {atomic,not_found};
+    [Word] -> NewW =edit_word_helper(Word,PropList),
+              add_word(NewW) %{atomic,ok}
+  end.
 
 %% recover deleted word
 %% to check deleted words call get_deleted_words()
