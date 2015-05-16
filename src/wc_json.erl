@@ -3,6 +3,7 @@
 -export([encode/1,
          decode/1,
          decode_from_web/1,
+ 
          record_to_proplist/1]).
 
 -include_lib("eunit/include/eunit.hrl").
@@ -179,5 +180,6 @@ two_languages() ->
   L  = #wc_language{name = <<"español"/utf8>>, initials = <<"es">>, is_mother_language = true},
   L2 = #wc_language{name = <<"spanish"/utf8>>, initials = <<"sp">>, is_mother_language = true},
   [L,L2].
+
 
 

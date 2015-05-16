@@ -18,7 +18,7 @@
 -export([ create_resource/2, 
           delete_resource/2,
           delete_completed/2
-          %resource_exists/2
+         
        ]).
 -include("../include/diccionario.hrl").
 
@@ -32,31 +32,29 @@ init(_Transport, _Req, _Opts) ->
   {upgrade, protocol, cowboy_rest}.
 
 allowed_methods(Req,State)->
-  {[<<"GET">>,<<"PUT">>,<<"POST">>,<<"DELETE">>],Req,State}.
+  {[<<"PUT">>,<<"GET">>,<<"POST">>,<<"DELETE">>],Req,State}.
 
 %% for GET 
 content_types_provided(Req, State) ->
+  {[{<<"application/json">>, handle_request}],Req,State}.
  
- {[{<<"application/json">>, handle_request}], Req, State}.
-
 %% for POST and PUT
 content_types_accepted(Req, State) ->
-  {[{<<"application/json">>, create_resource}],Req, State}.
+  {[{<<"application/json">>, create_resource}],Req,State}.
 
 %% for DELETE we have to implement the delete_resource callback
 delete_resource(Req,_State) ->
   {Item,Req2} = cowboy_req:binding(item,Req),  
-  ?DEBUG(Item), 
+ 
   case wc_backend:delete_word(Item) of
-    {[[]]} -> ?DEBUG(Item),{true,Req2,{[{atomic,not_found}]}};
-    {[{atomic,ok}]} -> ?DEBUG(Item),{true,Req2,{[{atomic,ok}]}}
+    {[[]]}          -> {true,Req2,{[{atomic,not_found}]}};
+    {[{atomic,ok}]} -> {true,Req2,{[{atomic,ok}]}}
   end.% pass the result as state
 
 %% return 200 when the word is deleted
 %% and 404 when the resource is not found
 delete_completed(Req,State) ->   
   Response = jiffy:encode(State),% <<"{\"atomic\":\"ok\"}">>
-  ?DEBUG(Response),
   case State of
     {[{atomic,ok}]} ->
       {ok, Req2} =       
@@ -82,30 +80,29 @@ create_resource(Req,State) ->
 handle_method(<<"GET">>,Req,State)->
   {AllBindings,_Req1} = cowboy_req:bindings(Req),
   Words = get_resource(AllBindings),
-  ?DEBUG(Words),
   {Words,Req,State}.
 
 %% 
 %%To create a word we use PUT
 create_or_edit(<<"PUT">>,Req,State) ->
   {ok,Body,_Req0} = cowboy_req:body(Req),% get the Body
-
   case  cowboy_req:bindings(Req) of
     {[{what,<<"words">>}],_Req1}->
       create_res(Body,Req,State);
     {[{what,<<"languages">>}],_Req1}->
       create_res(Body,Req,State)
-  end, 
- 
-  {<<"hi">>,Req,State};
+  end;%TODO:DELETE THIS RETURN
 %%
 %% To edit a word we use POST
-create_or_edit(<<"POST">>,Req,State) ->
-   {AllBindings,_Req1} = cowboy_req:bindings(Req),
-   ?DEBUG(AllBindings),AllBindings,  
-   {AllValues,_Req2}   = cowboy_req:qs_vals(Req),
-   ?DEBUG(AllValues),AllValues,
-   {<<"a POST">>,Req,State}.
+create_or_edit(<<"POST">>,Req,State) -> 
+  {ok,Body,_Req} = cowboy_req:body(Req),
+  ?DEBUG(Body),
+  Decoded = jiffy:decode(Body),
+  ?DEBUG(Decoded),
+  Result = edit_resource(jiffy:decode(Body),Req,State),
+  ?DEBUG(Result),
+    Result.
+
 
 %%%%%%%%%%%%%%%%%%%%
 %%%REST RESOURCES%%%
@@ -120,10 +117,8 @@ get_resource([what,<<"languages">>]) ->
     ok;
 
 get_resource([{item,Word},{what,<<"words">>}])->
-  ?DEBUG(Word),
   LWords  = wc_backend:find_word(Word),
-  Result = encode_list(LWords),
-  ?DEBUG(Result),  
+  Result = encode_list(LWords),  
   Result;
 		  
 get_resource([{item,ItemName},{what,<<"language">>}])->
@@ -140,11 +135,28 @@ create(<<"word">>,PList,Req,State)->
   Resp = jiffy:encode(Result),
   {ok, Req2} = 
     cowboy_req:reply(201,[{<<"server">>,<<"Apache">>}],Resp,Req),
-  
   {Resp, Req2, State};
       
 create(<<"language">>,_PList,_Req,_State) ->
     unimplemented. 
+
+edit_resource({[{<<"word">>,Item},{_Changes,{PropList}}]},Req,State) ->
+  %the key has to be an atom not a binary
+  PL = [{binary_to_atom(K,utf8),V}|| {K,V} <- PropList],
+  ?DEBUG(PL),
+  Result = wc_backend:edit_word(Item,PL),
+  Resp = jiffy:encode(Result),
+  {ok, Req2} = 
+    cowboy_req:reply(200,[{<<"server">>,<<"Apache">>}],Resp,Req),
+  ?DEBUG(Resp),
+  {Resp, Req2, State};
+
+
+edit_resource({[{<<"language">>,Item},{_Changes,{PropList}}]},Req,State) ->
+  Item,PropList,
+  {<<"language">>,Req,State}.
+    
+
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%auxiliar functions%%
@@ -160,7 +172,7 @@ encode_list(List) ->
        [L] = List,
 	  wc_json:encode(L);
     0 ->
-	  erlang:error("no words to encode. Error at encode_list @ wc_action_handler");  
+	  erlang:error("no words to encode. Error at encode_list @ wc_action_handler.Are you sure you entered a word and not a space or an invalid character?");  
     _ -> wc_json:encode(List)
   end.
 

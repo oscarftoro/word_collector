@@ -12,7 +12,7 @@
 
 -include_lib("common_test/include/ct.hrl").
 -include("../include/diccionario.hrl").
-
+-define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
 %%--------------------------------------------------------------------
 %% @spec suite() -> Info
 %% Info = [tuple()]
@@ -158,10 +158,10 @@ all() ->
 add_a_word_api_test(Config) -> 
   URL        = <<"localhost:8080/wc/words">>,
   ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
-  ReqBody    = <<"{\"word\":{\"title\": \"fuld\",\"definition\": \"curao\"}}">>,
+  PayLoad    = <<"{\"word\":{\"title\": \"fuld\",\"definition\": \"curao\"}}">>,
 
   {ok,_StatusCode,_RespHeaders,ClientRef} = 
-    hackney:request(put,URL,ReqHeaders,ReqBody), 
+    hackney:request(put,URL,ReqHeaders,PayLoad), 
   {ok,Body}  = hackney:body(ClientRef),
   <<"{\"atomic\":\"ok\"}">> = Body,
  
@@ -169,6 +169,7 @@ add_a_word_api_test(Config) ->
 
   <<"curao">> = Fuld#wc_word.definition,
   Config.
+
 
 %%--------------------------------------------------------------------
 %% @spec find_a_word_test(Config0) ->
@@ -217,13 +218,18 @@ delete_a_word_api_test(Config) ->
   <<"{\"atomic\":\"not_found\"}">> = Body2,
   Config.
 
+
 %%UPDATE
 edit_a_word_api_test(Config)->
   URL     = <<"localhost:8080/wc/words/bog">>,
   % URL2    = <<"localhost:8080/wc/words/guitar">>,
-  PayLoad = <<"{\"word\":\"bog\",\"changes\":{\"definition\": \"librito\",\"status\" : \"active\",\"examples\":\"så skal vi læse en bog\"}}">>,
+  ReqHeader = [{<<"Content-Type">>,<<"application/json">>}],
+  PayLoad = <<"{\"word\":\"bog\",\"changes\":{\"definition\":\"libro\",\"status\":\"active\",\"examples\":\"så skal vi læse en bog\"}}"/utf8>>,
   {ok,_StatusCode,_RespHeaders,ClientRef} =
-    hackney:request(post,URL,[],PayLoad,[]),
+    hackney:request(post,URL,ReqHeader,PayLoad),
+  ?DEBUG(_StatusCode),
+  ?DEBUG(_RespHeaders),
   {ok,Body} = hackney:body(ClientRef),
+  ?DEBUG(Body),
   <<"{\"atomic\":\"ok\"}">> = Body,
   Config.
