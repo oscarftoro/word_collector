@@ -96,7 +96,6 @@ create_or_edit(<<"PUT">>,Req,State) ->
 %% To edit a word we use POST
 create_or_edit(<<"POST">>,Req,State) -> 
   {ok,Body,_Req} = cowboy_req:body(Req),
-  ?DEBUG(Body),
   Decoded = jiffy:decode(Body),
   ?DEBUG(Decoded),
   Result = edit_resource(jiffy:decode(Body),Req,State),
@@ -139,18 +138,24 @@ create(<<"word">>,PList,Req,State)->
       
 create(<<"language">>,_PList,_Req,_State) ->
     unimplemented. 
-
+    
 edit_resource({[{<<"word">>,Item},{_Changes,{PropList}}]},Req,State) ->
   %the key has to be an atom not a binary
   PL = [{binary_to_atom(K,utf8),V}|| {K,V} <- PropList],
-  ?DEBUG(PL),
+
   Result = wc_backend:edit_word(Item,PL),
   Resp = jiffy:encode(Result),
-  {ok, Req2} = 
-    cowboy_req:reply(200,[{<<"server">>,<<"Apache">>}],Resp,Req),
-  ?DEBUG(Resp),
-  {Resp, Req2, State};
+  case Result of
+    {[{atomic,ok}]} -> 
+      {ok, Req2} = 
+      cowboy_req:reply(200,[{<<"server">>,<<"Apache">>}],Resp,Req),  
+      {jiffy:encode({[{atomic,ok}]}), Req2, State};
 
+    {[{atomic,not_found}]} ->
+      {ok, Req2} =
+      cowboy_req:reply(404,[{<<"server">>,<<"Apache">>}],Resp,Req),
+      {jiffy:encode({[{atomic,not_found}]}), Req2, State}
+  end;
 
 edit_resource({[{<<"language">>,Item},{_Changes,{PropList}}]},Req,State) ->
   Item,PropList,

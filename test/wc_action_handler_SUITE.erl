@@ -232,4 +232,16 @@ edit_a_word_api_test(Config)->
   {ok,Body} = hackney:body(ClientRef),
   ?DEBUG(Body),
   <<"{\"atomic\":\"ok\"}">> = Body,
+  
+  %try with a word that does not exist
+  {ok,_StatusCode2,_RespHeaders2,ClientRef2} =
+    hackney:request(post,<<"localhost:8080/wc/words/bog">>,
+      [{<<"Content-Type">>,<<"application/json">>}],
+     <<"{\"word\":\"boggy\",\"changes\":{
+       \"definition\":\"librillo\",
+       \"status\":\"active\",
+       \"examples\":\"så skal vi læse en bug\"}}"/utf8>>),
+  {ok,Body2} = hackney:body(ClientRef2),
+  ?DEBUG(Body2),
+  <<"{\"atomic\":\"not_found\"}">> = Body2,
   Config.
