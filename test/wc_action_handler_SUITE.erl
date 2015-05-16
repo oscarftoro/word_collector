@@ -72,6 +72,19 @@ end_per_group(_GroupName, _Config) ->
 %% Reason = term()
 %% @end
 %%--------------------------------------------------------------------
+init_per_testcase(edit_a_word_api_test, Config) ->
+  wc_backend:add_word(<<"bog">>,<<"libro">>),
+  wc_backend:add_word(<<"guitar">>,<<"guitarra">>),
+
+  Config;
+%%--------------------------------------------------------------------
+%% @spec init_per_testcase(TestCase, Config0) ->
+%%               Config1 | {skip,Reason} | {skip_and_save,Reason,Config1}
+%% TestCase = atom()
+%% Config0 = Config1 = [tuple()]
+%% Reason = term()
+%% @end
+%%--------------------------------------------------------------------
 init_per_testcase(_TestCase, Config) ->
   Config.
 
@@ -84,8 +97,12 @@ init_per_testcase(_TestCase, Config) ->
 %% @end
 %%--------------------------------------------------------------------
 end_per_testcase(delete_a_word_api_test,Config) ->
- wc_mnesia:remove_word(<<"fuld">>),
- wc_mnesia:remove_word(<<"pip">>),
+  wc_mnesia:remove_word(<<"fuld">>),
+  wc_mnesia:remove_word(<<"pip">>),
+  Config;
+end_per_testcase(edit_a_word_api_test,Config) ->
+  wc_mnesia:remove_word(<<"bog">>),
+  wc_mnesia:remove_word(<<"guitar">>),
   Config;
 end_per_testcase(_TestCase, _Config) ->
     ok.
@@ -116,7 +133,7 @@ groups() ->
 %% @end
 %%--------------------------------------------------------------------
 all() -> 
-    [add_a_word_api_test,find_a_word_api_test, delete_a_word_api_test].
+    [add_a_word_api_test,find_a_word_api_test, delete_a_word_api_test,edit_a_word_api_test].
 
 %%--------------------------------------------------------------------
 %% @spec TestCase() -> Info
@@ -137,6 +154,7 @@ all() ->
 %% on wc/words 
 %% @end
 %%--------------------------------------------------------------------
+%%CREATE
 add_a_word_api_test(Config) -> 
   URL        = <<"localhost:8080/wc/words">>,
   ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
@@ -162,7 +180,7 @@ add_a_word_api_test(Config) ->
 %% Find a word (or Retrieve): GET wc/words/word_title
 %% @end
 %%--------------------------------------------------------------------
-
+%%RETRIEVE
 find_a_word_api_test(Config)->
 
   URL        = <<"localhost:8080/wc/words">>,
@@ -181,23 +199,31 @@ find_a_word_api_test(Config)->
 
   <<"pip">> = Word#wc_word.title,
   Config. 
-
+%%DELETE
 delete_a_word_api_test(Config) ->
   
   URL  = <<"localhost:8080/wc/words/fuld">>,
   {ok,_StatusCode,_RespHeaders,ClientRef} =
     hackney:request(delete,URL,[],<<>>,[]),
   {ok,Body} = hackney:body(ClientRef),
- 
+  <<"{\"atomic\":\"ok\"}">> = Body,
   [] = wc_backend:find_word(<<"fuld">>),
- % try again
+ % try to add the same word again...
   {ok, _StatusCode2,_RespHeaders2_,ClientRef2} =
     hackney:request(delete,<<"localhost:8080/wc/words/fuld">>,
       [],<<>>,[]),
    {ok,Body2} = hackney:body(ClientRef2),
 
   <<"{\"atomic\":\"not_found\"}">> = Body2,
-
-  
   Config.
 
+%%UPDATE
+edit_a_word_api_test(Config)->
+  URL     = <<"localhost:8080/wc/words/bog">>,
+  % URL2    = <<"localhost:8080/wc/words/guitar">>,
+  PayLoad = <<"{\"word\":\"bog\",\"changes\":{\"definition\": \"librito\",\"status\" : \"active\",\"examples\":\"så skal vi læse en bog\"}}">>,
+  {ok,_StatusCode,_RespHeaders,ClientRef} =
+    hackney:request(post,URL,[],PayLoad,[]),
+  {ok,Body} = hackney:body(ClientRef),
+  <<"{\"atomic\":\"ok\"}">> = Body,
+  Config.
