@@ -22,17 +22,19 @@ Debugging the application
 
 Running tests
 -------------
-Since the project use erlang.mk, a simple ```make tests``` will do the job.
+Since the project use erlang.mk, a simple ```make tests``` will do the job. There are Eunit and Common Tests included on this project.
 
-When the tests are done, the results can easily checked in the folder log. Open the index file and inspect what is wrong where. Common test mantain an history of your tests. Simply amazing. To run the test call ```make tests```.
+When the tests are done, the results can easily be checked in the folder log. Open the index file and inspect what is wrong where. Common test mantain an history of your tests. Simply amazing. 
+
 
 REST API
-------------
-Retrieve all words
+--------
+Retrieve all words 
 
 GET /wc/words
 
 example:
+
 ```bash
 curl -vX GET http://localhost:8080/wc/words
 ```
@@ -66,9 +68,9 @@ POST /wc/words/word\_title with a payload:
 {
     "word": "word_title",
     "changes": {
-        "definition": "new_definition",
-        "status" : "new_status",
-        "examples: "an_example"
+        "definition": "new\_definition",
+        "status" : "new\_status",
+        "examples: "an\_example"
         
     }
 }
@@ -80,4 +82,7 @@ curl -vX POST http://localhost:8080/wc/words/kiks \
 -d'{"word": "kiks","changes": {"definition": "galleturris",
 "status" : "active","examples": "så skal vi spise kiks"}}'
 ```
+
+
+
 

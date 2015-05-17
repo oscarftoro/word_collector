@@ -12,3 +12,6 @@ test/#*
 *.beam
 .word_collector.plt
 logs/
+Emakefile
+elog5.config
+test/functions_to_test
