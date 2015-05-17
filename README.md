@@ -13,14 +13,12 @@ Features
 
 Starting the application
 ------------------------
-To start the application run on your terminal```make shell```
+To start the application run on your terminal ```make shell```
 
 
 Debugging the application
 -------------------------
-```
-make debug
-``` starts  the application using the error logger and allowing the use of a ?DEBUG macro to inspect the code in some of the modules where this macro is defined. This macro is an idea mentioned by Joe Armstrong in Programming Erlang, and Francesco Cesarini and Simon Thompson in Erlang Programming . I just wrote the Makefile that make this macro available. 
+```make debug``` starts  the application using the error logger and allowing the use of a ?DEBUG macro to inspect the code in some of the modules where this macro is defined. This macro is an idea mentioned by Joe Armstrong in Programming Erlang, and Francesco Cesarini and Simon Thompson in Erlang Programming . I just wrote the Makefile that make this macro available. 
 
 Running tests
 -------------
