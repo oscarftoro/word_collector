@@ -82,7 +82,3 @@ curl -vX POST http://localhost:8080/wc/words/kiks \
 -d'{"word": "kiks","changes": {"definition": "galleturris",
 "status" : "active","examples": "så skal vi spise kiks"}}'
 ```
-
-
-
-
