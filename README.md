@@ -66,7 +66,7 @@ curl -vX GET http://localhost:8080/wc/words/hej
 POST /wc/words/word\_title with a payload:
 ```json
 {
-    "word": "word_title",
+    "word": "word title",
     "changes": {
         "definition": "new definition",
         "status" : "new status",
