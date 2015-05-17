@@ -1,1 +1,0 @@
-function one() {return "en"};
