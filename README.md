@@ -68,9 +68,9 @@ POST /wc/words/word\_title with a payload:
 {
     "word": "word_title",
     "changes": {
-        "definition": "new_definition",
-        "status" : "new_status",
-        "examples: "an\_example"
+        "definition": "new definition",
+        "status" : "new status",
+        "examples: "an example"
         
     }
 }
