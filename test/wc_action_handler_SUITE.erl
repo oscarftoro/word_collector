@@ -12,7 +12,7 @@
 
 -include_lib("common_test/include/ct.hrl").
 -include("../include/diccionario.hrl").
--define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
+
 %%--------------------------------------------------------------------
 %% @spec suite() -> Info
 %% Info = [tuple()]
@@ -227,10 +227,9 @@ edit_a_word_api_test(Config)->
   PayLoad = <<"{\"word\":\"bog\",\"changes\":{\"definition\":\"libro\",\"status\":\"active\",\"examples\":\"så skal vi læse en bog\"}}"/utf8>>,
   {ok,_StatusCode,_RespHeaders,ClientRef} =
     hackney:request(post,URL,ReqHeader,PayLoad),
-  ?DEBUG(_StatusCode),
-  ?DEBUG(_RespHeaders),
+
   {ok,Body} = hackney:body(ClientRef),
-  ?DEBUG(Body),
+
   <<"{\"atomic\":\"ok\"}">> = Body,
   
   %try with a word that does not exist
@@ -242,6 +241,6 @@ edit_a_word_api_test(Config)->
        \"status\":\"active\",
        \"examples\":\"så skal vi læse en bug\"}}"/utf8>>),
   {ok,Body2} = hackney:body(ClientRef2),
-  ?DEBUG(Body2),
+
   <<"{\"atomic\":\"not_found\"}">> = Body2,
   Config.
