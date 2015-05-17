@@ -70,8 +70,7 @@ POST /wc/words/word\_title with a payload:
     "changes": {
         "definition": "new definition",
         "status" : "new status",
-        "examples: "an example"
-        
+        "examples: "an example" 
     }
 }
 ```
