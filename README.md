@@ -64,14 +64,13 @@ curl -vX GET http://localhost:8080/wc/words/hej
 ### Edit or Update a Word
 
 POST /wc/words/word\_title with a payload:
-```json
+```javascript
 {
     "word": "word title",
     "changes": {
         "definition": "new definition",
         "status" : "new status",
-        "examples: "an example" 
-    }
+        "examples: "an example" }
 }
 ```
 example:
