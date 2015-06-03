@@ -43,7 +43,7 @@ curl -vX GET http://localhost:8080/wc/words
 ### Add a word
 The word to be added has to be formated as a JSON object.
 
-PUT /wc/words {"title":"word1","definition":"palabra1"}
+PUT /wc/words {"title":"word1","definition":"palabra1"}{"word":{"title": "mus","definition": "ratón"}}
 
 example:
 
