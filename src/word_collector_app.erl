@@ -13,7 +13,7 @@ start(_Type, _Args) ->
   Dispatch = cowboy_router:compile([
     {'_',Path_list}
   ]),
-
+    
   {ok,_pid} = cowboy:start_http(word_collector_app,100,[{port,8080}],
   [{env,[{dispatch,Dispatch}]}]),
 
@@ -24,14 +24,15 @@ stop(_State) ->
 
 path_list() ->
 
-  Static_assets = {"/",cowboy_static,{priv_dir,word_collector,"client"}},
+  Static_assets = {"/[...]",cowboy_static,{priv_dir,word_collector,"client"}},
   Index         = {"/",cowboy_static,{priv_file,word_collector,"client/index.html",
   [{mimetypes, {<<"text">>, <<"html">>, []}}]}},
   Action        =  {"/wc/:what/[:item]",wc_action_handler,[]},%for CREATE,READ_ALL, Search
-  [Index,Static_assets,Action].
+  [Action,Index,Static_assets].
 
 start() ->
   application:ensure_all_started(word_collector).
 
 stop() ->
   application:stop(word_collector).
+
