@@ -51,13 +51,16 @@ encode_list_of_langs(Ls) ->
   [#wc_word{}] | [#wc_language{}].
 
 decode(Bin) ->
+ 
   {Decoded} = jiffy:decode(Bin),
   [{Type,ToDecode}] = Decoded,
   
   case Type  of
   <<"word">>  -> 
     {TD} = ToDecode,
-    one_record_decoder(TD,lists:seq(2,11),#wc_word{});
+    %2 represent title,3 represent description and so on length(TD) gives the last 
+    %value - 1
+    one_record_decoder(TD,lists:seq(2,(1 + length(TD))),#wc_word{});%old 11
   <<"words">> -> 
     list_of_records_decoder(ToDecode);
   <<"language">>  ->
@@ -71,6 +74,7 @@ decode(Bin) ->
 %% {Type,PropList} where Type can be word, words, language
 %% or languages. P
 decode_from_web(Bin) ->
+  ?DEBUG(Bin),
   {[{Type,{PList}}]} = jiffy:decode(Bin),
   {Type,PList}.
        

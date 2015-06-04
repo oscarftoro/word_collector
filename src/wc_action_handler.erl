@@ -124,14 +124,17 @@ get_resource([{item,ItemName},{what,<<"language">>}])->
   ItemName,ok.		     
 		      
 create_res(Body,Req,State)->
-  {Type,PList} = wc_json:decode_from_web(Body),
-  create(Type,PList,Req,State).
+  Record = wc_json:decode(Body),%decode JSON to Erlang Resource Record
+  Type = element(1,Record), %which kind of record?
+  create(Type,Record,Req,State).       % now creating a real word
 
-create(<<"word">>,PList,Req,State)->
-  [Title,Definition] = 
-    [proplists:get_value(K,PList) || {K,_V} <- PList],
-  Result = wc_backend:add_word(Title,Definition),
+create(wc_word,Word,Req,State)->
+ %%TODO: iterate over the values and generate a word
+  Result =
+    wc_backend:add_word(Word),
   Resp = jiffy:encode(Result),
+
+  ?DEBUG(Resp),
   {ok, Req2} = 
     cowboy_req:reply(201,[{<<"server">>,<<"Apache">>}],Resp,Req),
   {Resp, Req2, State};
