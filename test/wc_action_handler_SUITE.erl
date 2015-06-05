@@ -158,7 +158,7 @@ all() ->
 add_a_word_api_test(Config) -> 
   URL        = <<"localhost:8080/wc/words">>,
   ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
-  PayLoad    = <<"{\"word\":{\"title\": \"fuld\",\"definition\": \"curao\"}}">>,
+  PayLoad    = <<"{\"word\":{\"title\": \"fuld\",\"language\":\"dk\",\"definition\": \"curao\"}}">>,
 
   {ok,_StatusCode,_RespHeaders,ClientRef} = 
     hackney:request(put,URL,ReqHeaders,PayLoad), 
