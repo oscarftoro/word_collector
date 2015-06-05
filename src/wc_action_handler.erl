@@ -96,8 +96,7 @@ create_or_edit(<<"PUT">>,Req,State) ->
 %% To edit a word we use POST
 create_or_edit(<<"POST">>,Req,State) -> 
   {ok,Body,_Req} = cowboy_req:body(Req),
-  Decoded = jiffy:decode(Body),
-  ?DEBUG(Decoded),
+ 
   Result = edit_resource(jiffy:decode(Body),Req,State),
   ?DEBUG(Result),
     Result.
