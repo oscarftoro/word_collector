@@ -12,7 +12,7 @@
 
 -include_lib("common_test/include/ct.hrl").
 -include("../include/diccionario.hrl").
-
+-define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
 %%--------------------------------------------------------------------
 %% @spec suite() -> Info
 %% Info = [tuple()]
@@ -77,6 +77,10 @@ init_per_testcase(edit_a_word_api_test, Config) ->
   wc_backend:add_word(<<"guitar">>,<<"guitarra">>),
 
   Config;
+
+init_per_testcase(get_all_words_test,Config)->
+  wc_backend:add_word(<<"hi">>,<<"hola">>),
+  Config;
 %%--------------------------------------------------------------------
 %% @spec init_per_testcase(TestCase, Config0) ->
 %%               Config1 | {skip,Reason} | {skip_and_save,Reason,Config1}
@@ -104,6 +108,9 @@ end_per_testcase(edit_a_word_api_test,Config) ->
   wc_mnesia:remove_word(<<"bog">>),
   wc_mnesia:remove_word(<<"guitar">>),
   Config;
+end_per_testcase(get_all_words_test,_Config) ->
+    wc_mnesia:remove_word(<<"hi">>),
+    ok;
 end_per_testcase(_TestCase, _Config) ->
     ok.
 
@@ -133,7 +140,7 @@ groups() ->
 %% @end
 %%--------------------------------------------------------------------
 all() -> 
-    [add_a_word_api_test,find_a_word_api_test, delete_a_word_api_test,edit_a_word_api_test].
+    [add_a_word_api_test,find_a_word_api_test, delete_a_word_api_test,edit_a_word_api_test,get_all_words_test].
 
 %%--------------------------------------------------------------------
 %% @spec TestCase() -> Info
@@ -243,4 +250,18 @@ edit_a_word_api_test(Config)->
   {ok,Body2} = hackney:body(ClientRef2),
 
   <<"{\"atomic\":\"not_found\"}">> = Body2,
+  Config.
+
+%the result has to be a list
+get_all_words_test(Config) ->
+ 
+ [Hi] = wc_backend:find_word(<<"hi">>),
+ <<"hi">> = Hi#wc_word.title,
+
+  URL = <<"localhost:8080/wc/words">>,
+  ReqHeader = [{<<"Content-Type">>,<<"application/json">>}],
+  {ok,_StatusCode,_RespHeaders,ClientRef} =hackney:request(get,URL,ReqHeader),
+  {ok,Body} = hackney:body(ClientRef),
+  
+  ?DEBUG(Body),
   Config.
