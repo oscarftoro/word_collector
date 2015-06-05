@@ -32,14 +32,19 @@ encode(Ls)->
   Head = hd(Ls),
 
   if is_record(Head,wc_word) ->
-    encode_list_of_words(Ls);
+    encode_list_of_words(Ls,without_type);%GET /wc/words format
   true -> %read it as else
     encode_list_of_langs(Ls)
   end.
 
-encode_list_of_words(Ls)->
+encode_list_of_words(Ls,without_type)->
   Words = [{record_to_proplist(W)}|| W <- Ls],
-  jiffy:encode({[{words,Words}]}).
+    jiffy:encode(Words);
+%% encode using this format:
+%% {words,[W1,W2..]} 
+encode_list_of_words(Ls,with_type) ->
+  Words = [{record_to_proplist(W)}|| W <- Ls],
+    jiffy:encode({[{words,Words}]}).
 
 encode_list_of_langs(Ls) ->
   Langs = [{record_to_proplist(L)}|| L <- Ls],
