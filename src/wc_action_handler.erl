@@ -12,6 +12,7 @@
 %% API
 -export([ init/3]).
 -export([ content_types_provided/2,
+          options/2,
 	  allowed_methods/2,
           content_types_accepted/2]).
 -export([ handle_request/2]).
@@ -27,15 +28,25 @@
 -else.
 -define(DEBUG(X),void).
 -endif.
-%Macro for response to allow CORS
-%https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
--define(ACAO,{<<"Access-Control-Allow-Origin">>, <<"*">>}).
+
+
 
 init(_Transport, _Req, _Opts) ->
   {upgrade, protocol, cowboy_rest}.
 
 allowed_methods(Req,State)->
-  {[<<"PUT">>,<<"GET">>,<<"POST">>,<<"DELETE">>],Req,State}.
+  {[<<"PUT">>,<<"GET">>,<<"POST">>,<<"DELETE">>,<<"OPTIONS">>],Req,State}.
+
+%%to implement CORS
+options(Req, State) ->
+    Req1 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Methods">>, <<"PUT,GET,POST,DELETE,OPTIONS">>, Req),
+    Req2 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Origin">>, <<"*">>, Req1),
+   
+ Req3 =  
+  cowboy_req:set_resp_header(<<"Access-Control-Allow-Headers">>,
+  <<"Content-Type">>,Req2),
+    ?DEBUG(Req3),
+    {ok, Req3, State}.
 
 %% for GET 
 content_types_provided(Req, State) ->
@@ -83,14 +94,15 @@ create_resource(Req,State) ->
 handle_method(<<"GET">>,Req,State)->
   {AllBindings,_Req1} = cowboy_req:bindings(Req),
   Words = get_resource(AllBindings),
-   Req2 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>, <<"*">>, Req),
-  ?DEBUG(Words),
-  %% ?DEBUG(_Req2),
+   Req2 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>, <<"*">>, Req),%%ONLY FOR A MOMENTARY SOLUTION!
+ 
+
   {Words,Req2,State}.
 
 %% 
 %%To create a word we use PUT
 create_or_edit(<<"PUT">>,Req,State) ->
+  ?DEBUG(Req),
   {ok,Body,_Req0} = cowboy_req:body(Req),% get the Body
   case  cowboy_req:bindings(Req) of
     {[{what,<<"words">>}],_Req1}->
@@ -133,7 +145,7 @@ create_res(Body,Req,State)->
   Record = wc_json:decode(Body),%decode JSON to Erlang Resource Record
   Type = element(1,Record), %which kind of record?
   create(Type,Record,Req,State).       % now creating a real word
-
+%%PUT WORD
 create(wc_word,Word,Req,State)->
  %%TODO: iterate over the values and generate a word
   Result =
@@ -142,7 +154,10 @@ create(wc_word,Word,Req,State)->
 
   ?DEBUG(Resp),
   {ok, Req2} = 
-    cowboy_req:reply(201,[{<<"server">>,<<"Apache">>}],Resp,Req),
+    cowboy_req:reply(201,[{<<"server">>,<<"Apache">>},{ 
+    <<"access-control-allow-origin">>,
+    <<"*">>}],Resp,Req),
+  
   {Resp, Req2, State};
       
 create(<<"language">>,_PList,_Req,_State) ->
