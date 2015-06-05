@@ -27,6 +27,9 @@
 -else.
 -define(DEBUG(X),void).
 -endif.
+%Macro for response to allow CORS
+%https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+-define(ACAO,{<<"Access-Control-Allow-Origin">>, <<"*">>}).
 
 init(_Transport, _Req, _Opts) ->
   {upgrade, protocol, cowboy_rest}.
@@ -80,7 +83,10 @@ create_resource(Req,State) ->
 handle_method(<<"GET">>,Req,State)->
   {AllBindings,_Req1} = cowboy_req:bindings(Req),
   Words = get_resource(AllBindings),
-  {Words,Req,State}.
+   Req2 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>, <<"*">>, Req),
+  ?DEBUG(Words),
+  %% ?DEBUG(_Req2),
+  {Words,Req2,State}.
 
 %% 
 %%To create a word we use PUT
@@ -99,13 +105,14 @@ create_or_edit(<<"POST">>,Req,State) ->
  
   Result = edit_resource(jiffy:decode(Body),Req,State),
   ?DEBUG(Result),
-    Result.
+  Result.
 
 
 %%%%%%%%%%%%%%%%%%%%
 %%%REST RESOURCES%%%
 %%%%%%%%%%%%%%%%%%%%
-              
+      
+% GET ALL WORDS        
 get_resource([{what,<<"words">>}]) ->
   Words = wc_backend:get_all_words(),
   Result = wc_json:encode(Words),
