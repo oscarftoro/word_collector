@@ -41,9 +41,13 @@ example:
 curl -vX GET http://localhost:8080/wc/words
 ```
 ### Add a word
-The word to be added has to be formated as a JSON object.
+The word to be added has to be formated as a JSON object and has to convey the following order: title,language, definition.
 
-PUT /wc/words {"title":"word1","definition":"palabra1"}{"word":{"title": "mus","definition": "ratón"}}
+PUT /wc/words
+
+*payload:*
+
+{"word":{"title": "word title","language":"language name","definition": "word definition"}}
 
 example:
 
@@ -51,7 +55,7 @@ example:
 ```bash
 curl -vX PUT http://localhost:8080/wc/words \
 -H"Content-Type:application/json" \
--d'{ "title": "hej", "definition": "hola" }'
+-d'{word: {"title": "hej","language":"dk", "definition": "hola" }}'
 ```
 ### Retrieve a word
 
