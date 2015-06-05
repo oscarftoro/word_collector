@@ -262,6 +262,6 @@ get_all_words_test(Config) ->
   ReqHeader = [{<<"Content-Type">>,<<"application/json">>}],
   {ok,_StatusCode,_RespHeaders,ClientRef} =hackney:request(get,URL,ReqHeader),
   {ok,Body} = hackney:body(ClientRef),
-  
-  ?DEBUG(Body),
+  Decoded = jiffy:decode(Body),
+  true = is_list(Decoded),
   Config.
