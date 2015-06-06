@@ -38,6 +38,7 @@ allowed_methods(Req,State)->
   {[<<"PUT">>,<<"GET">>,<<"POST">>,<<"DELETE">>,<<"OPTIONS">>],Req,State}.
 
 %%to implement CORS
+%% https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 options(Req, State) ->
     Req1 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Methods">>, <<"PUT,GET,POST,DELETE,OPTIONS">>, Req),
     Req2 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Origin">>, <<"*">>, Req1),
@@ -172,12 +173,14 @@ edit_resource({[{<<"word">>,Item},{_Changes,{PropList}}]},Req,State) ->
   case Result of
     {[{atomic,ok}]} -> 
       {ok, Req2} = 
-      cowboy_req:reply(200,[{<<"server">>,<<"Apache">>}],Resp,Req),  
+      cowboy_req:reply(200,[{<<"server">>,<<"Apache">>},
+      {<<"Access-Control-Allow-Origin">>,<<"*">>}],Resp,Req),  
       {jiffy:encode({[{atomic,ok}]}), Req2, State};
 
     {[{atomic,not_found}]} ->
       {ok, Req2} =
-      cowboy_req:reply(404,[{<<"server">>,<<"Apache">>}],Resp,Req),
+      cowboy_req:reply(404,[{<<"server">>,<<"Apache">>},
+      {<<"Access-Control-Allow-Origin">>,<<"*">>}],Resp,Req),
       {jiffy:encode({[{atomic,not_found}]}), Req2, State}
   end;
 
