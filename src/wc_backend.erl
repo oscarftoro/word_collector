@@ -2,7 +2,8 @@
 %%% @author oscar toro
 %%% @copyright (C) 2015,
 %%% @doc
-%%%
+%%% wc_backend is a generic server that handles the communication
+%%% between the Mnesia Database and the rest of the system
 %%% @end
 %%% Created : 11. Feb 2015 18:10
 %%%-------------------------------------------------------------------
@@ -73,7 +74,9 @@ init([]) ->
 %% @private
 %% @doc
 %% Handling call messages
-%%
+%% The Server receive the following calls:
+%% 
+%% {add_word,Word} add a Word record into the Mnesia database
 %% @end
 %%--------------------------------------------------------------------
 -spec(handle_call(Request :: term(), From :: {pid(), Tag :: term()},
@@ -107,7 +110,7 @@ handle_call({find_word,WordName},_From,State) ->
 
 
 %%--------------------------------------------------------------------
-%% @privat
+%% @private
 %% @doc
 %% Handling cast messages
 %%
@@ -167,30 +170,75 @@ terminate(_Reason, _State) ->
 code_change(_OldVsn, State, _Extra) ->
         {ok, State}.
 
-%%%===================================================================
+%%%================================================================
 %%% Internal functions
-%%%===================================================================
-%%deprecated
+%%%================================================================
+
+%%-----------------------------------------------------------------
+%% @doc
+%% 
+%% Add a word receiveing only a name and a definition. 
+%% Both has to be binaries.
+%% @spec add_word(binary(),binary()) -> {reply,Reply,State}
+%% @end
+%%-----------------------------------------------------------------
+
 add_word(WordName,Definition) ->
     gen_server:call(?MODULE,{add_word,WordName,Definition}).
-
+%%-----------------------------------------------------------------
+%% @doc
+%% Add a word receiveing a Record of type #wc_word. 
+%% @spec add_word(#wc_word{}) -> {reply,Reply,State}
+%% @end
+%%--------------------------------------------------------------------
 add_word(Word)->
     gen_server:call(?MODULE,{add_word,Word}).
-
+%%-----------------------------------------------------------------
+%% 
+%% @doc
+%% Retrieve a list of words 
+%% 
+%% @spec get_all_words() -> {reply,Reply,State}
+%% @end
+%%--------------------------------------------------------------------
 get_all_words() ->
         gen_server:call(?MODULE,{get_all_words}).
-
+%%--------------------------------------------------------------------
+%% 
+%% @doc
+%% 
+%% Delete a word. The function receive a binary that contains the name of the word
+%% 
+%% @spec delete_word(binary()) -> {reply,Reply,State}
+%% @end
+%%--------------------------------------------------------------------
 delete_word(WordName)->
     gen_server:call(?MODULE,{delete_word,WordName}).
-%% UT
-%% WordName is the index of word
-%% Item can be an atom of tipe: title, language, definition,
-%% status, priority,examples, locations, photos, 
-%% date_time, available
-%% Newvalue is of course the new value as string
--spec edit_word(binary(),{atom(),binary() | boolean()| []|[binary()],[integer()]})->{ok,atom} |{error,string()}.
+
+-spec edit_word(binary(),{atom(),binary() | boolean()| []|[binary()],[integer()]})-> {ok,atom} |{error,string()}.
+
+%%-----------------------------------------------------------------
+%% @doc
+%% The function receive a binary that contains the name of the word
+%% to be edited. 
+%% WordName is a binary containing the name of the word 
+%% The second parameter is a properlist of the following type 
+%% [{ValueToChange,newValue}]
+%% ValueToChange can be a binary including: title, language, 
+%% definition , status, priority,examples, 
+%% locations, photos. Whereas newValue can be a boolean for 
+%% available and a list of numbers for daytime and location
+%% @end
+%%-----------------------------------------------------------------
+
 edit_word(WordName,PropList)->
     gen_server:call(?MODULE,{edit_word,WordName,PropList}).
-
+%%-----------------------------------------------------------------
+%% @doc
+%% Find a word by name. 
+%% WordName has to be a binary.
+%% 
+%% @end
+%%-----------------------------------------------------------------
 find_word(WordName)->    
     gen_server:call(?MODULE,{find_word,WordName}).
