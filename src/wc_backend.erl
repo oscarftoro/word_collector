@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%%% @author oscar toro
+%%% @author Oscar Toro
 %%% @copyright (C) 2015,
 %%% @doc
 %%% wc_backend is a generic server that handles the communication
@@ -177,8 +177,7 @@ code_change(_OldVsn, State, _Extra) ->
 %%-----------------------------------------------------------------
 %% @doc
 %% 
-%% Add a word receiveing only a name and a definition. 
-%% Both has to be binaries.
+%% Add a word receiveing only a name and a definition where both has to be of type binary(). 
 %% @spec add_word(binary(),binary()) -> {reply,Reply,State}
 %% @end
 %%-----------------------------------------------------------------
@@ -196,9 +195,9 @@ add_word(Word)->
 %%-----------------------------------------------------------------
 %% 
 %% @doc
-%% Retrieve a list of words 
+%% Retrieve a list of words. 
 %% 
-%% @spec get_all_words() -> {reply,Reply,State}
+%% @spec get_all_words() -> [#wc_word{}]
 %% @end
 %%--------------------------------------------------------------------
 get_all_words() ->
@@ -209,7 +208,7 @@ get_all_words() ->
 %% 
 %% Delete a word. The function receive a binary that contains the name of the word
 %% 
-%% @spec delete_word(binary()) -> {reply,Reply,State}
+%% @spec delete_word(binary()) -> {ok, atomic} | {error,any()}
 %% @end
 %%--------------------------------------------------------------------
 delete_word(WordName)->
@@ -228,6 +227,7 @@ delete_word(WordName)->
 %% definition , status, priority,examples, 
 %% locations, photos. Whereas newValue can be a boolean for 
 %% available and a list of numbers for daytime and location
+%% @spec edit_word(binary(),binary()) -> {ok,atomic}|{error_any()}
 %% @end
 %%-----------------------------------------------------------------
 
@@ -236,8 +236,8 @@ edit_word(WordName,PropList)->
 %%-----------------------------------------------------------------
 %% @doc
 %% Find a word by name. 
-%% WordName has to be a binary.
-%% 
+%% WordName has to be a binary().
+%% @spec find_word(binary()) -> [#wc_word{}]
 %% @end
 %%-----------------------------------------------------------------
 find_word(WordName)->    
