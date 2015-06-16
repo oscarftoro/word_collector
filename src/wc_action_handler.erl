@@ -75,12 +75,19 @@ content_types_provided(Req, State) ->
 %% @doc
 %% In order to support POST and PUT methods, this call has to be defined. Both PUT and POST reach the content_type_accepted step. We are also accepting JSON format so this is the type we are going to enable.
 %% when one of those methods are called these are going to be handled by create_resource function. I couldn't find a better name at the moment
-%% @todo change the name of the function handler for POST and PUT
+%% @todo change the name of the function handler for POST and PUT for something more chick
 %% @end
 %%--------------------------------------------------------------
 
 content_types_accepted(Req, State) ->
   {[{<<"application/json">>, create_resource}],Req,State}.
+
+%%--------------------------------------------------------------
+%% @doc
+%% When the resource exist, and the conditional step also succed, the resource is ready to be deleted. To do so, the delete_resource callback is carried out. After deletion, delete_completed is called
+%% @end
+%%-------------------------------------------------------------
+
 
 %% for DELETE we have to implement the delete_resource callback
 delete_resource(Req,_State) ->
@@ -91,8 +98,14 @@ delete_resource(Req,_State) ->
     {[{atomic,ok}]} -> {true,Req2,{[{atomic,ok}]}}
   end.% pass the result as state
 
-%% return 200 when the word is deleted
+%%--------------------------------------------------------------
+%% @doc
+%%  After deletion, delete_completed is called. Here we ensure that we deliver the correct response to the client.
+%% Returns 200 when the word is deleted
 %% and 404 when the resource is not found
+%% @end
+%%-------------------------------------------------------------
+
 delete_completed(Req,State) ->   
   Response = jiffy:encode(State),% <<"{\"atomic\":\"ok\"}">>
   case State of
@@ -108,9 +121,19 @@ delete_completed(Req,State) ->
       {false,Req2,State}
   end.
        
+%%--------------------------------------------------------------
+%% @doc
+%% This function is called to handle GET requests
+%% @end
+%%-------------------------------------------------------------
 
 handle_request(Req,State) ->
   handle_method(cowboy_req:get(method,Req),Req,State).
+%%--------------------------------------------------------------
+%% @doc
+%% This function is called to handle POST and PUT requests
+%% @end
+%%-------------------------------------------------------------
 
 create_resource(Req,State) ->
   create_or_edit(cowboy_req:get(method,Req),Req,State).
@@ -120,9 +143,8 @@ create_resource(Req,State) ->
 handle_method(<<"GET">>,Req,State)->
   {AllBindings,_Req1} = cowboy_req:bindings(Req),
   Words = get_resource(AllBindings),
-   Req2 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>, <<"*">>, Req),%%ONLY FOR A MOMENTARY SOLUTION!
+   Req2 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>, <<"*">>, Req),%%and this is the final step to support CORS
  
-
   {Words,Req2,State}.
 
 %% 
