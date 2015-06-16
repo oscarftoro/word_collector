@@ -1,6 +1,6 @@
 %%%-------------------------------------------------------------------
 %%% @author Oscar Toro
-%%% @copyright (C) 2015,
+%%% @copyright (CC) 2015,
 %%% @doc
 %%% wc_backend is a generic server that handles the communication
 %%% between the Mnesia Database and the rest of the system

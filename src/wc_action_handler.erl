@@ -2,7 +2,8 @@
 %%% @author oscar toro
 %%% @copyright (CC) 2015,  Oscar Toro
 %%% @doc
-%%%
+%%% Action handler is where the magic of the REST handling happens.
+%%% Cowboy is using this module to deal with the requests
 %%% @end
 %%% Created : 14. Nov 2014 13:58
 %%%-------------------------------------------------------------------
@@ -22,23 +23,35 @@
          
        ]).
 -include("../include/diccionario.hrl").
-
+%% a Macro to debug 
 -ifdef(debug_flag).
 -define(DEBUG(X),io:format("DEBUG ~p: ~p ~p~n",[?MODULE,?LINE,X])).
 -else.
 -define(DEBUG(X),void).
 -endif.
 
-
+%%-----------------------------------------------------------------
+%% @doc
+%% Initialization Callback. This is the first callback that is called. Yes, as an in a gen_fsm or gen_fsm. This callback performs an upgrade to allow the use of REST for the current request. 
+%% After excution, Cowboy switch to the REST protocol, and behaves as a state machine.
+%% @end
+%%-----------------------------------------------------------------
 
 init(_Transport, _Req, _Opts) ->
   {upgrade, protocol, cowboy_rest}.
-
+%%--------------------------------------------------------------
+%% @doc
+%% Define allowed HTTP methods. In our case we are going to use PUT,GET,POST and DELETE to allow CRUD actions and OPTIONS to allow CORS
+%% @end
+%%--------------------------------------------------------------
 allowed_methods(Req,State)->
   {[<<"PUT">>,<<"GET">>,<<"POST">>,<<"DELETE">>,<<"OPTIONS">>],Req,State}.
-
-%%to implement CORS
-%% https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+%%--------------------------------------------------------------
+%% @doc
+%% In order to allow CORS we have to implement the following callback and furthermore give the correct response into the header.
+%%More info at www.google.dk/#q=cors or at https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+%% @end
+%%--------------------------------------------------------------
 options(Req, State) ->
     Req1 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Methods">>, <<"PUT,GET,POST,DELETE,OPTIONS">>, Req),
     Req2 = cowboy_req:set_resp_header(<<"Access-Control-Allow-Origin">>, <<"*">>, Req1),
@@ -49,11 +62,23 @@ options(Req, State) ->
     ?DEBUG(Req3),
     {ok, Req3, State}.
 
-%% for GET 
+%%--------------------------------------------------------------
+%% @doc
+%% Every time a resource is request, this callback is called.
+%% Therefore content_types_provided callback is necesary to be defined in order to distinguish the content-type that the web service is going to serve. We are specifying that we are providing responses in JSON format.
+%% @end
+%%--------------------------------------------------------------
 content_types_provided(Req, State) ->
   {[{<<"application/json">>, handle_request}],Req,State}.
  
-%% for POST and PUT
+%%--------------------------------------------------------------
+%% @doc
+%% In order to support POST and PUT methods, this call has to be defined. Both PUT and POST reach the content_type_accepted step. We are also accepting JSON format so this is the type we are going to enable.
+%% when one of those methods are called these are going to be handled by create_resource function. I couldn't find a better name at the moment
+%% @todo change the name of the function handler for POST and PUT
+%% @end
+%%--------------------------------------------------------------
+
 content_types_accepted(Req, State) ->
   {[{<<"application/json">>, create_resource}],Req,State}.
 
