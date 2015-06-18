@@ -121,20 +121,19 @@ delete_completed(Req,State) ->
       {false,Req2,State}
   end.
        
-%%--------------------------------------------------------------
+%%------------------------------------------------------------
 %% @doc
 %% This function is called to handle GET requests
 %% @end
 %%-------------------------------------------------------------
-
 handle_request(Req,State) ->
   handle_method(cowboy_req:get(method,Req),Req,State).
-%%--------------------------------------------------------------
+
+%%-------------------------------------------------------------
 %% @doc
 %% This function is called to handle POST and PUT requests
 %% @end
 %%-------------------------------------------------------------
-
 create_resource(Req,State) ->
   create_or_edit(cowboy_req:get(method,Req),Req,State).
 
@@ -191,8 +190,8 @@ get_resource([{item,ItemName},{what,<<"language">>}])->
 		      
 create_res(Body,Req,State)->
   Record = wc_json:decode(Body),%decode JSON to Erlang Resource Record
-  Type = element(1,Record), %which kind of record?
-  create(Type,Record,Req,State).       % now creating a real word
+  Type = element(1,Record), %which kind of record are you?
+  create(Type,Record,Req,State). % now creating a real word
 %%PUT WORD
 create(wc_word,Word,Req,State)->
  %%TODO: iterate over the values and generate a word
@@ -235,8 +234,6 @@ edit_resource({[{<<"language">>,Item},{_Changes,{PropList}}]},Req,State) ->
   Item,PropList,
   {<<"language">>,Req,State}.
     
-
-
 %%%%%%%%%%%%%%%%%%%%%%
 %%auxiliar functions%%
 %%%%%%%%%%%%%%%%%%%%%%
@@ -251,7 +248,7 @@ encode_list(List) ->
        [L] = List,
 	  wc_json:encode(L);
     0 ->
-	  erlang:error("no words to encode. Error at encode_list @ wc_action_handler.Are you sure you entered a word and not a space or an invalid character?");  
+	  erlang:error("no words to encode. Error at encode_list @ wc_action_handler. Are you sure you entered a word and not a space or an invalid character?");  
     _ -> wc_json:encode(List)
   end.
 
