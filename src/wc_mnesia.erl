@@ -1,6 +1,6 @@
 %%%-------------------------------------------------------------------
 %%% @author oscar
-%%% @copyright (CC) 2014, Oscar Toro
+%%% @copyright (CC) 2015, Oscar Toro
 %%% @doc
 %%%
 %%% @end
@@ -17,9 +17,14 @@
          recover_word/1,find_word_all/1,
          remove_word/1]).
 % exported only for tests purppose, 
-% delete when we are done with db implementation
+% TODO: delete when we are done with db implementation
 -export([add_word/1]).
-
+%%--------------------------------------------------------------
+%% @doc
+%% Confirm that mnesia schema is available. If not, it creates the required tables wc_word and wc_language
+%% 
+%% @end
+%%--------------------------------------------------------------
 -spec install(atom() | [atom()]) -> {[any()],[atom()]}.
 install(Nodes) ->
   ok                 = mnesia:create_schema(Nodes),
@@ -35,11 +40,21 @@ install(Nodes) ->
     {attributes, record_info(fields, wc_language)},
     {disc_copies, Nodes}]),
     rpc:multicall(Nodes,application,stop,[mnesia]).
-
+%%--------------------------------------------------------------
+%% @doc
+%% Call install with the current node as a parameter.
+%% 
+%% @end
+%%--------------------------------------------------------------
 -spec install() -> {[any()],[atom()]}.
 install() ->
   install([node()]).
-
+%%--------------------------------------------------------------
+%% @doc
+%% Auxiliar function that do what it says to do.
+%% 
+%% @end
+%%--------------------------------------------------------------
 -spec check_db_exist(atom()| [atom()])-> ok | {[any()],[atom()]}.
 check_db_exist(Node)->
   case filelib:wildcard("Mnesia*") of
@@ -48,14 +63,24 @@ check_db_exist(Node)->
     [] -> install(Node)
       end.
 
+%%--------------------------------------------------------------
+%% @doc
 %% add word to the collection
-%% T is title whereas D is definition
+%% T is title whereas D is definition. Both has to be binaries
+%% @end
+%%--------------------------------------------------------------
+
 -spec add_word(undefined | binary(),undefined | binary()) -> {'aborted',_} | {'atomic',_ }.
 
 add_word(T,D) ->
   W = #wc_word{title=T,definition=D},
   add_word(W).
-
+%%--------------------------------------------------------------
+%% @doc
+%% Add word to the collection. Take a record of type wc_word
+%% 
+%% @end
+%%--------------------------------------------------------------
 -spec add_word(#wc_word{}) -> {'aborted',_} | {'atomic',_}.
 add_word(W) ->
   F = fun() ->
@@ -65,29 +90,53 @@ add_word(W) ->
     {aborted,Reason} -> {aborted,Reason};
     {atomic, Value} -> {atomic, Value}
   end.
-    
+%%--------------------------------------------------------------
+%% @doc
+%% As you would expect, this function will retrieve all the words from the database
+%% 
+%% @end
+%%--------------------------------------------------------------    
 -spec get_all_words() -> [#wc_word{}] | [].
 get_all_words() ->
   do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= true])).
-
+%%--------------------------------------------------------------
+%% @doc
+%% Get a list of words with the value available = false
+%% 
+%% @end
+%%-------------------------------------------------------------- 
 -spec get_deleted_words() -> [#wc_word{}] | [].
 get_deleted_words() ->
   do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.available =:= false])).
-%% find word by word name
+%%--------------------------------------------------------------
+%% @doc
+%% Find word by word name. The search is by name and has to be a binary.
 %% remember, you get a list of results!!!
+%% @end
+%%-------------------------------------------------------------- 
+
 -spec find_word(binary()) -> [#wc_word{}] | [].
 find_word(W) ->
   wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W, X#wc_word.available =:= true])).
+%%--------------------------------------------------------------
+%% @doc
+%% Find word by name, including deleted words.
+%% @end
+%%-------------------------------------------------------------- 
 
-%% find word by name, including deleted words
 find_word_all(W)->
    wc_mnesia:do(qlc:q([X || X <- mnesia:table(wc_word),X#wc_word.title =:= W])).    
-%% 
-%% first parameter is the name(binary()) of the word to be edited, 
-%% second parameter is a list of tuples containing
+
+%%--------------------------------------------------------------
+%% @doc
+%% First parameter is the name(binary()) of the word to be edited, 
+%% Second parameter is a list of tuples containing
 %% changes. For example: 
-%% [{status,<<"pasive">>},{definition,<<"new definition">>},
-%% {priority,<<"high">>}]
+%% [{status,passive::binary()},{definition,new definition::binary()},
+%% {priority,high::binary()}]
+%% @end
+%%-------------------------------------------------------------- 
+
    
 -spec edit_word(binary(),[{atom(),binary() | boolean() |
  [] | [binary()],[integer()]}])-> {'aborted',_} | {'atomic',_} | [].
@@ -108,8 +157,13 @@ do_edit_word(W,PropList)->
               add_word(NewW) %{atomic,ok}
   end.
 
+
+%%--------------------------------------------------------------
+%% @doc
 %% recover deleted word
 %% to check deleted words call get_deleted_words()
+%% @end
+%%--------------------------------------------------------------
 recover_word(W)->
   [Word]  = find_word_all(W),
   RecWord = edit_word_helper(Word,[{available,true}]), 
@@ -133,18 +187,33 @@ translate_index(locations)  -> 8;
 translate_index(photos)     -> 9;
 translate_index(date_time)  -> 10;
 translate_index(available)  -> 11.
-
+%%--------------------------------------------------------------
+%% @doc
+%% Set value of word available to false. This function does not delete words, but instead hide them.
+%% 
+%% @end
+%%--------------------------------------------------------------
 -spec delete_word(binary()) ->  no_return().
 delete_word(WordName)->
   edit_word(WordName,[{available,false}]).
-
+%%--------------------------------------------------------------
+%% @doc
+%% This function really delete words from the database. Use with caution
+%% 
+%% @end
+%%--------------------------------------------------------------
 remove_word(WordName)->
   Oid = {wc_word,WordName},
   F = fun() ->
     mnesia:delete(Oid)
   end,
     mnesia:transaction(F).
-
+%%--------------------------------------------------------------
+%% @doc
+%% Evaluate qlc queries of type:
+%% qlc:q(query()).
+%% @end
+%%--------------------------------------------------------------
 %% Evaluate qlc queries of type:
 %% qlc:q(query()).
 %% query() = [Something || Something <- mnesia:table(SomeTable),Predicate]
