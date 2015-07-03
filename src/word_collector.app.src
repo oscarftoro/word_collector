@@ -5,10 +5,15 @@
 		word_collector_app,
 		word_collector_sup,
 		wc_action_handler,
-		wc_mnesia,
-		wc_word_action_handler
+		wc_backend,
+                wc_mnesia,
+                wc_json
 	]},
-	{registered, []},
+	{registered, [word_collector_app,
+		      word_collector_sup,
+                      wc_action_handler,
+                      wc_backend
+		      ]},
 	{applications, [
 		kernel,stdlib,sasl,cowboy,mnesia,lager,sync
 	]},
