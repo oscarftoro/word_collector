@@ -1,0 +1,5 @@
+%% encoding: UTF-8
+{application,word_collector}.
+{packages,[]}.
+{modules,[wc_action_handler,wc_backend,wc_json,wc_mnesia,word_collector_app,
+          word_collector_sup]}.

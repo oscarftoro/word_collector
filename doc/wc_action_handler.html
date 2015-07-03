@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module wc_action_handler</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module wc_action_handler</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+   Action handler is where the magic of the REST handling happens.
+<p>Copyright © (CC) 2015,  Oscar Toro</p>
+
+<p><b>Authors:</b> oscar toro.</p>
+
+<h2><a name="description">Description</a></h2>
+   Action handler is where the magic of the REST handling happens.
+   Cowboy is using this module to deal with the requests
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#allowed_methods-2">allowed_methods/2</a></td><td>
+  Define allowed HTTP methods.</td></tr>
+<tr><td valign="top"><a href="#content_types_accepted-2">content_types_accepted/2</a></td><td>
+  In order to support POST and PUT methods, this call has to be defined.</td></tr>
+<tr><td valign="top"><a href="#content_types_provided-2">content_types_provided/2</a></td><td>
+  Every time a resource is request, this callback is called.</td></tr>
+<tr><td valign="top"><a href="#create_resource-2">create_resource/2</a></td><td>
+  This function is called to handle POST and PUT requests.</td></tr>
+<tr><td valign="top"><a href="#delete_completed-2">delete_completed/2</a></td><td>
+   After deletion, delete_completed is called.</td></tr>
+<tr><td valign="top"><a href="#delete_resource-2">delete_resource/2</a></td><td>
+  When the resource exist, and the conditional step also succed, the resource is ready to be deleted.</td></tr>
+<tr><td valign="top"><a href="#handle_request-2">handle_request/2</a></td><td>
+  This function is called to handle GET requests.</td></tr>
+<tr><td valign="top"><a href="#init-3">init/3</a></td><td>
+  Initialization Callback.</td></tr>
+<tr><td valign="top"><a href="#options-2">options/2</a></td><td>
+  In order to allow CORS we have to implement the following callback and furthermore give the correct response into the header.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="allowed_methods-2">allowed_methods/2</a></h3>
+<div class="spec">
+<p><tt>allowed_methods(Req, State) -&gt; any()</tt></p>
+</div><p>
+  Define allowed HTTP methods. In our case we are going to use PUT,GET,POST and DELETE to allow CRUD actions and OPTIONS to allow CORS</p>
+
+<h3 class="function"><a name="content_types_accepted-2">content_types_accepted/2</a></h3>
+<div class="spec">
+<p><tt>content_types_accepted(Req, State) -&gt; any()</tt></p>
+</div><p>
+  In order to support POST and PUT methods, this call has to be defined. Both PUT and POST reach the content_type_accepted step. We are also accepting JSON format so this is the type we are going to enable.
+  when one of those methods are called these are going to be handled by create_resource function. I couldn't find a better name at the moment</p>
+
+<h3 class="function"><a name="content_types_provided-2">content_types_provided/2</a></h3>
+<div class="spec">
+<p><tt>content_types_provided(Req, State) -&gt; any()</tt></p>
+</div><p>
+  Every time a resource is request, this callback is called.
+  Therefore content_types_provided callback is necesary to be defined in order to distinguish the content-type that the web service is going to serve. We are specifying that we are providing responses in JSON format.</p>
+
+<h3 class="function"><a name="create_resource-2">create_resource/2</a></h3>
+<div class="spec">
+<p><tt>create_resource(Req, State) -&gt; any()</tt></p>
+</div><p>
+  This function is called to handle POST and PUT requests</p>
+
+<h3 class="function"><a name="delete_completed-2">delete_completed/2</a></h3>
+<div class="spec">
+<p><tt>delete_completed(Req, State) -&gt; any()</tt></p>
+</div><p>
+   After deletion, delete_completed is called. Here we ensure that we deliver the correct response to the client.
+  Returns 200 when the word is deleted
+  and 404 when the resource is not found</p>
+
+<h3 class="function"><a name="delete_resource-2">delete_resource/2</a></h3>
+<div class="spec">
+<p><tt>delete_resource(Req, State) -&gt; any()</tt></p>
+</div><p>
+  When the resource exist, and the conditional step also succed, the resource is ready to be deleted. To do so, the delete_resource callback is carried out. After deletion, delete_completed is called</p>
+
+<h3 class="function"><a name="handle_request-2">handle_request/2</a></h3>
+<div class="spec">
+<p><tt>handle_request(Req, State) -&gt; any()</tt></p>
+</div><p>
+  This function is called to handle GET requests</p>
+
+<h3 class="function"><a name="init-3">init/3</a></h3>
+<div class="spec">
+<p><tt>init(Transport, Req, Opts) -&gt; any()</tt></p>
+</div><p>
+  Initialization Callback. This is the first callback that is called. Yes, as an in a gen_fsm or gen_fsm. This callback performs an upgrade to allow the use of REST for the current request.
+  After excution, Cowboy switch to the REST protocol, and behaves as a state machine.</p>
+
+<h3 class="function"><a name="options-2">options/2</a></h3>
+<div class="spec">
+<p><tt>options(Req, State) -&gt; any()</tt></p>
+</div><p>
+  In order to allow CORS we have to implement the following callback and furthermore give the correct response into the header.
+ More info at www.google.dk/#q=cors or at https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS</p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Jun 19 2015, 09:23:26.</i></p>
+</body>
+</html>

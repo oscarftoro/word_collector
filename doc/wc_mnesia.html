@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module wc_mnesia</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module wc_mnesia</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>.
+<p>Copyright © (CC) 2015, Oscar Toro</p>
+
+<p><b>Authors:</b> oscar.</p>
+
+<h2><a name="description">Description</a></h2>
+  
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_word-1">add_word/1</a></td><td>
+  Add word to the collection.</td></tr>
+<tr><td valign="top"><a href="#add_word-2">add_word/2</a></td><td>
+  add word to the collection
+  T is title whereas D is definition.</td></tr>
+<tr><td valign="top"><a href="#check_db_exist-1">check_db_exist/1</a></td><td>
+  Auxiliar function that do what it says to do.</td></tr>
+<tr><td valign="top"><a href="#delete_word-1">delete_word/1</a></td><td>
+  Set value of word available to false.</td></tr>
+<tr><td valign="top"><a href="#do-1">do/1</a></td><td>
+  Evaluate qlc queries of type:
+  qlc:q(query()).</td></tr>
+<tr><td valign="top"><a href="#edit_word-2">edit_word/2</a></td><td>
+  First parameter is the name(binary()) of the word to be edited,
+  Second parameter is a list of tuples containing
+  changes.</td></tr>
+<tr><td valign="top"><a href="#find_word-1">find_word/1</a></td><td>
+  Find word by word name.</td></tr>
+<tr><td valign="top"><a href="#find_word_all-1">find_word_all/1</a></td><td>
+  Find word by name, including deleted words.</td></tr>
+<tr><td valign="top"><a href="#get_all_words-0">get_all_words/0</a></td><td>
+  As you would expect, this function will retrieve all the words from the database.</td></tr>
+<tr><td valign="top"><a href="#get_deleted_words-0">get_deleted_words/0</a></td><td>
+  Get a list of words with the value available = false.</td></tr>
+<tr><td valign="top"><a href="#install-0">install/0</a></td><td>
+  Call install with the current node as a parameter.</td></tr>
+<tr><td valign="top"><a href="#install-1">install/1</a></td><td>
+  Confirm that mnesia schema is available.</td></tr>
+<tr><td valign="top"><a href="#recover_word-1">recover_word/1</a></td><td>
+  recover deleted word
+  to check deleted words call get_deleted_words().</td></tr>
+<tr><td valign="top"><a href="#remove_word-1">remove_word/1</a></td><td>
+  This function really delete words from the database.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="add_word-1">add_word/1</a></h3>
+<div class="spec">
+<p><tt>add_word(Wc_word::#wc_word{}) -&gt; {aborted, term()} | {atomic, term()}</tt><br></p>
+</div><p>
+  Add word to the collection. Take a record of type wc_word
+ </p>
+
+<h3 class="function"><a name="add_word-2">add_word/2</a></h3>
+<div class="spec">
+<p><tt>add_word(T::undefined | binary(), D::undefined | binary()) -&gt; {aborted, term()} | {atomic, term()}</tt><br></p>
+</div><p>
+  add word to the collection
+  T is title whereas D is definition. Both has to be binaries</p>
+
+<h3 class="function"><a name="check_db_exist-1">check_db_exist/1</a></h3>
+<div class="spec">
+<p><tt>check_db_exist(Node::atom() | [atom()]) -&gt; ok | {[any()], [atom()]}</tt><br></p>
+</div><p>
+  Auxiliar function that do what it says to do.
+ </p>
+
+<h3 class="function"><a name="delete_word-1">delete_word/1</a></h3>
+<div class="spec">
+<p><tt>delete_word(WordName::binary()) -&gt; no_return()</tt><br></p>
+</div><p>
+  Set value of word available to false. This function does not delete words, but instead hide them.
+ </p>
+
+<h3 class="function"><a name="do-1">do/1</a></h3>
+<div class="spec">
+<p><tt>do(Q) -&gt; any()</tt></p>
+</div><p>
+  Evaluate qlc queries of type:
+  qlc:q(query()).</p>
+
+<h3 class="function"><a name="edit_word-2">edit_word/2</a></h3>
+<div class="spec">
+<p><tt>edit_word(W::binary(), PropList::[{atom(), binary() | boolean() | [] | [binary()], [integer()]}]) -&gt; {aborted, term()} | {atomic, term()} | []</tt><br></p>
+</div><p>
+  First parameter is the name(binary()) of the word to be edited,
+  Second parameter is a list of tuples containing
+  changes. For example:
+  [{status,passive::binary()},{definition,new definition::binary()},
+  {priority,high::binary()}]</p>
+
+<h3 class="function"><a name="find_word-1">find_word/1</a></h3>
+<div class="spec">
+<p><tt>find_word(W::binary()) -&gt; [#wc_word{}] | []</tt><br></p>
+</div><p>
+  Find word by word name. The search is by name and has to be a binary.
+  remember, you get a list of results!!!</p>
+
+<h3 class="function"><a name="find_word_all-1">find_word_all/1</a></h3>
+<div class="spec">
+<p><tt>find_word_all(W) -&gt; any()</tt></p>
+</div><p>
+  Find word by name, including deleted words.</p>
+
+<h3 class="function"><a name="get_all_words-0">get_all_words/0</a></h3>
+<div class="spec">
+<p><tt>get_all_words() -&gt; [#wc_word{}] | []</tt><br></p>
+</div><p>
+  As you would expect, this function will retrieve all the words from the database
+ </p>
+
+<h3 class="function"><a name="get_deleted_words-0">get_deleted_words/0</a></h3>
+<div class="spec">
+<p><tt>get_deleted_words() -&gt; [#wc_word{}] | []</tt><br></p>
+</div><p>
+  Get a list of words with the value available = false
+ </p>
+
+<h3 class="function"><a name="install-0">install/0</a></h3>
+<div class="spec">
+<p><tt>install() -&gt; {[any()], [atom()]}</tt><br></p>
+</div><p>
+  Call install with the current node as a parameter.
+ </p>
+
+<h3 class="function"><a name="install-1">install/1</a></h3>
+<div class="spec">
+<p><tt>install(Nodes::atom() | [atom()]) -&gt; {[any()], [atom()]}</tt><br></p>
+</div><p>
+  Confirm that mnesia schema is available. If not, it creates the required tables wc_word and wc_language
+ </p>
+
+<h3 class="function"><a name="recover_word-1">recover_word/1</a></h3>
+<div class="spec">
+<p><tt>recover_word(W) -&gt; any()</tt></p>
+</div><p>
+  recover deleted word
+  to check deleted words call get_deleted_words()</p>
+
+<h3 class="function"><a name="remove_word-1">remove_word/1</a></h3>
+<div class="spec">
+<p><tt>remove_word(WordName) -&gt; any()</tt></p>
+</div><p>
+  This function really delete words from the database. Use with caution
+ </p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Jun 19 2015, 09:23:26.</i></p>
+</body>
+</html>
