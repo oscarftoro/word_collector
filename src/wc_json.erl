@@ -2,8 +2,6 @@
 -module(wc_json).
 -export([encode/1,
          decode/1,
-         decode_from_web/1,
- 
          record_to_proplist/1]).
 
 -include_lib("eunit/include/eunit.hrl").
@@ -56,14 +54,17 @@ encode_list_of_langs(Ls) ->
   [#wc_word{}] | [#wc_language{}].
 
 decode(Bin) ->
- 
-  {Decoded} = jiffy:decode(Bin),
+  decode_helper(jiffy:decode(Bin)).
+
+%% decoding with type included
+decode_helper({Decoded})->
   [{Type,ToDecode}] = Decoded,
   
   case Type  of
   <<"word">>  -> 
     {TD} = ToDecode,
-    %2 represent title,3 represent description and so on length(TD) gives the last 
+    %2 represents title, 3 represents description and so on
+    %length(TD) gives the last 
     %value - 1
     one_record_decoder(TD,lists:seq(2,(1 + length(TD))),#wc_word{});%old 11
   <<"words">> -> 
@@ -73,18 +74,13 @@ decode(Bin) ->
     one_record_decoder(TD,lists:seq(2,4),#wc_language{});
   <<"languages">> -> 
     list_of_records_decoder(ToDecode)
-  end.
+  end;
 
-%% Decode with jiffy and return a tuple
-%% {Type,PropList} where Type can be word, words, language
-%% or languages. P
-decode_from_web(Bin) ->
-  ?DEBUG(Bin),
-  {[{Type,{PList}}]} = jiffy:decode(Bin),
-  {Type,PList}.
+%% to decode a list of words
+%% currently on this version it is not used
+decode_helper(ToDecode) when is_list(ToDecode) ->
+  decode_list_of_words(ToDecode).
        
-    
-
 %% Auxiliar funtion that performs decoding of PropList.
 %% Takes a Properlist with key/values of the record(PL)
 %% A List of numbers with indexes of the record(L) 
@@ -93,13 +89,11 @@ decode_from_web(Bin) ->
 %% that is why the Indexes starts at 2, which is the first
 %% value of the record.	  
 one_record_decoder(PL,L, Rec) ->
- 
   Values    = [V ||  {_K,V} <- PL], % all the values
   Formated  = lists:zip(L,Values), % proplist{int,binary() | []}
   lists:foldr(fun({K,V},Acc) -> setelement(K,Acc,V) end,Rec,Formated). 
 
-list_of_records_decoder(TD) ->
-  
+list_of_records_decoder(TD) -> 
   {Item} = hd(TD),
   %?DEBUG(Item),
   case  is_language_proplist(Item) of
