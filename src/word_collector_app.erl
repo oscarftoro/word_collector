@@ -14,7 +14,7 @@ start(_Type, _Args) ->
     {'_',Path_list}
   ]),
     
-  {ok,_pid} = cowboy:start_http(word_collector_app,100,[{port,8080}],
+  {ok,_pid} = cowboy:start_http(word_collector_app,10,[{port,8080}],
   [{env,[{dispatch,Dispatch}]}]),
 
   word_collector_sup:start_link().
