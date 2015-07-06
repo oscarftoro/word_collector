@@ -228,21 +228,14 @@ edit_resource({[{<<"word">>,Item},{_Changes,{PropList}}]},Req,State) ->
   ?DEBUG(Result),
   case Result of
     {[{atomic,ok}]} -> 
-      Req2 = 
-      cowboy_req:set_resp_header(<<"server">>,<<"Apache">>,Req),
-      Req3 =
-      cowboy_req:set_resp_header(
-      <<"Access-Control-Allow-Origin">>,<<"*">>,Req2),
-      Req4 =
-      cowboy_req:set_resp_body(Resp,Req3),
-      ?DEBUG(Req4),
+      Req4 = cors_response(Req,Resp),
       {true, Req4, State};
 
     {[{atomic,not_found}]} ->
-      {ok, Req2} =
-      cowboy_req:reply(404,[{<<"server">>,<<"Apache">>},
-      {<<"Access-Control-Allow-Origin">>,<<"*">>}],Resp,Req),
-      {jiffy:encode({[{atomic,not_found}]}), Req2, State}
+      Req2 = %%body response {"atomic":"not_found"}	 
+      cors_response(Req,jiffy:encode({[{atomic,not_found}]})),
+   
+      {false, Req2, State}
   end;
 
 edit_resource({[{<<"language">>,Item},{_Changes,{PropList}}]},Req,State) ->
@@ -267,4 +260,12 @@ encode_list(List) ->
     _ -> wc_json:encode(List)
   end.
 
-
+%% pack a Request according to CORS
+cors_response(Req,Body)->
+  Req2 = 
+    cowboy_req:set_resp_header(<<"server">>,<<"Apache">>,Req),
+  Req3 =
+    cowboy_req:set_resp_header(
+      <<"Access-Control-Allow-Origin">>,<<"*">>,Req2),
+  cowboy_req:set_resp_body(Body,Req3).
+    
