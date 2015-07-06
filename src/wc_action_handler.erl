@@ -199,22 +199,14 @@ create_res(Body,Req,State)->
   Record = wc_json:decode(Body),%decode JSON to Erlang Resource Record
   Type = element(1,Record), %which kind of record are you?
   create(Type,Record,Req,State). % now creating a real word
-%%PUT WORD
+%% POST WORD
 create(wc_word,Word,Req,State)->
  %%TODO: iterate over the values and generate a word
-  Result =
-    wc_backend:add_word(Word),
-  Resp = jiffy:encode(Result),
-
+  Result = wc_backend:add_word(Word),
+  Resp   = jiffy:encode(Result),
   ?DEBUG(Resp),
-  Req2 = 
-  cowboy_req:set_resp_header(<<"server">>,<<"Apache">>,Req),
-  Req3 =
-  cowboy_req:set_resp_header(<<"access-control-allow-origin">>,
-    <<"*">>,Req2),
-  Req4 = cowboy_req:set_resp_body(Resp,Req3),
-  
-  {true, Req4, State};
+  Req2   = cors_response(Req,Resp),  
+  {true, Req2, State};
       
 create(<<"language">>,_PList,_Req,_State) ->
     unimplemented. 
@@ -233,8 +225,7 @@ edit_resource({[{<<"word">>,Item},{_Changes,{PropList}}]},Req,State) ->
 
     {[{atomic,not_found}]} ->
       Req2 = %%body response {"atomic":"not_found"}	 
-      cors_response(Req,jiffy:encode({[{atomic,not_found}]})),
-   
+      cors_response(Req,jiffy:encode({[{atomic,not_found}]})),  
       {false, Req2, State}
   end;
 
