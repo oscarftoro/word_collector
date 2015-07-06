@@ -88,15 +88,13 @@ content_types_accepted(Req, State) ->
 
 %%--------------------------------------------------------------
 %% @doc
-%% When the resource exist, and the conditional step also 
-%% succeed, the resource is ready to be deleted. To do so, the
+%% When the resource exists, and the conditional step also 
+%% succeeds, the resource is ready to be deleted. To do so, the
 %% delete_resource callback is carried out. After deletion,
 %% delete_completed is called
 %% @end
 %%-------------------------------------------------------------
 
-
-    
 %% for DELETE we have to implement the delete_resource callback
 delete_resource(Req,_State) ->
   {Item,Req2} = cowboy_req:binding(item,Req),  
@@ -118,14 +116,10 @@ delete_completed(Req,State) ->
   Response = jiffy:encode(State),% <<"{\"atomic\":\"ok\"}">>
   case State of
     {[{atomic,ok}]} ->
-      {ok, Req2} =       
-        cowboy_req:reply(200,[{<<"server">>,<<"Apache">>}],
-        Response,Req),
+      Req2 = cors_response(Req,Response),
       {true,Req2,State};
     {[{atomic,not_found}]}->
-      {ok, Req2} =       
-        cowboy_req:reply(404,[{<<"server">>,<<"Apache">>}],
-        Response,Req),
+      Req2 = cors_response(Req,Response),
       {false,Req2,State}
   end.
        
