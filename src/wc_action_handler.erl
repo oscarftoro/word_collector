@@ -3,7 +3,7 @@
 %%% @copyright (CC) 2015,  Oscar Toro
 %%% @doc
 %%% Action handler is where the magic of the REST handling happens.
-%%% Cowboy is using this module to deal with the requests
+%%% Cowboy is using this module to deal with the HTTP requests
 %%% @end
 %%% Created : 14. Nov 2014 13:58
 %%%-------------------------------------------------------------------
@@ -19,8 +19,7 @@
 -export([ handle_request/2]).
 -export([ create_resource/2, 
           delete_resource/2,
-          delete_completed/2
-         
+          delete_completed/2      
        ]).
 -include("../include/diccionario.hrl").
 %% a Macro to debug 
@@ -65,7 +64,10 @@ options(Req, State) ->
 %%--------------------------------------------------------------
 %% @doc
 %% Every time a resource is request, this callback is called.
-%% Therefore content_types_provided callback is necesary to be defined in order to distinguish the content-type that the web service is going to serve. We are specifying that we are providing responses in JSON format.
+%% Therefore content_types_provided callback is necesary to be 
+%% defined in order to distinguish the content-type that the 
+%% web service is going to serve. We are specifying that we are 
+%% providing responses in JSON format.
 %% @end
 %%--------------------------------------------------------------
 content_types_provided(Req, State) ->
@@ -80,15 +82,20 @@ content_types_provided(Req, State) ->
 %%--------------------------------------------------------------
 
 content_types_accepted(Req, State) ->
+  ?DEBUG(Req),
   {[{<<"application/json">>, create_resource}],Req,State}.
 
 %%--------------------------------------------------------------
 %% @doc
-%% When the resource exist, and the conditional step also succed, the resource is ready to be deleted. To do so, the delete_resource callback is carried out. After deletion, delete_completed is called
+%% When the resource exist, and the conditional step also 
+%% succeed, the resource is ready to be deleted. To do so, the
+%% delete_resource callback is carried out. After deletion,
+%% delete_completed is called
 %% @end
 %%-------------------------------------------------------------
 
 
+    
 %% for DELETE we have to implement the delete_resource callback
 delete_resource(Req,_State) ->
   {Item,Req2} = cowboy_req:binding(item,Req),  
@@ -127,6 +134,7 @@ delete_completed(Req,State) ->
 %% @end
 %%-------------------------------------------------------------
 handle_request(Req,State) ->
+  ?DEBUG(Req),
   handle_method(cowboy_req:get(method,Req),Req,State).
 
 %%-------------------------------------------------------------
@@ -135,6 +143,7 @@ handle_request(Req,State) ->
 %% @end
 %%-------------------------------------------------------------
 create_resource(Req,State) ->
+  ?DEBUG(Req),
   create_or_edit(cowboy_req:get(method,Req),Req,State).
 
 %% to retrieve a word or words we use GET
@@ -146,9 +155,9 @@ handle_method(<<"GET">>,Req,State)->
  
   {Words,Req2,State}.
 
-%% 
-%%To create a word we use PUT
-create_or_edit(<<"PUT">>,Req,State) ->
+
+%%To create a word we use POST
+create_or_edit(<<"POST">>,Req,State) ->
   ?DEBUG(Req),
   {ok,Body,_Req0} = cowboy_req:body(Req),% get the Body
   case  cowboy_req:bindings(Req) of
@@ -158,8 +167,9 @@ create_or_edit(<<"PUT">>,Req,State) ->
       create_res(Body,Req,State)
   end;%TODO:DELETE THIS RETURN
 %%
-%% To edit a word we use POST
-create_or_edit(<<"POST">>,Req,State) -> 
+%% To edit a word we use PUT
+create_or_edit(<<"PUT">>,Req,State) -> 
+  ?DEBUG(Req),
   {ok,Body,_Req} = cowboy_req:body(Req),
  
   Result = edit_resource(jiffy:decode(Body),Req,State),
@@ -167,9 +177,6 @@ create_or_edit(<<"POST">>,Req,State) ->
   Result.
 
 
-%%%%%%%%%%%%%%%%%%%%
-%%%REST RESOURCES%%%
-%%%%%%%%%%%%%%%%%%%%
       
 % GET ALL WORDS        
 get_resource([{what,<<"words">>}]) ->
@@ -200,12 +207,14 @@ create(wc_word,Word,Req,State)->
   Resp = jiffy:encode(Result),
 
   ?DEBUG(Resp),
-  {ok, Req2} = 
-    cowboy_req:reply(201,[{<<"server">>,<<"Apache">>},{ 
-    <<"access-control-allow-origin">>,
-    <<"*">>}],Resp,Req),
+  Req2 = 
+  cowboy_req:set_resp_header(<<"server">>,<<"Apache">>,Req),
+  Req3 =
+  cowboy_req:set_resp_header(<<"access-control-allow-origin">>,
+    <<"*">>,Req2),
+  Req4 = cowboy_req:set_resp_body(Resp,Req3),
   
-  {Resp, Req2, State};
+  {true, Req4, State};
       
 create(<<"language">>,_PList,_Req,_State) ->
     unimplemented. 
@@ -216,12 +225,18 @@ edit_resource({[{<<"word">>,Item},{_Changes,{PropList}}]},Req,State) ->
 
   Result = wc_backend:edit_word(Item,PL),
   Resp = jiffy:encode(Result),
+  ?DEBUG(Result),
   case Result of
     {[{atomic,ok}]} -> 
-      {ok, Req2} = 
-      cowboy_req:reply(200,[{<<"server">>,<<"Apache">>},
-      {<<"Access-Control-Allow-Origin">>,<<"*">>}],Resp,Req),  
-      {jiffy:encode({[{atomic,ok}]}), Req2, State};
+      Req2 = 
+      cowboy_req:set_resp_header(<<"server">>,<<"Apache">>,Req),
+      Req3 =
+      cowboy_req:set_resp_header(
+      <<"Access-Control-Allow-Origin">>,<<"*">>,Req2),
+      Req4 =
+      cowboy_req:set_resp_body(Resp,Req3),
+      ?DEBUG(Req4),
+      {true, Req4, State};
 
     {[{atomic,not_found}]} ->
       {ok, Req2} =
@@ -248,7 +263,7 @@ encode_list(List) ->
        [L] = List,
 	  wc_json:encode(L);
     0 ->
-	  erlang:error("no words to encode. Error at encode_list @ wc_action_handler. Are you sure you entered a word and not a space or an invalid character?");  
+	  erlang:error("no words to encode. Error at encode_list @ wc_action_handler. Are you sure you sent a word and not a space or an invalid character?");  
     _ -> wc_json:encode(List)
   end.
 

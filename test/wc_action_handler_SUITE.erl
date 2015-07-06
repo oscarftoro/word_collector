@@ -168,8 +168,9 @@ add_a_word_api_test(Config) ->
   PayLoad    = <<"{\"word\":{\"title\": \"fuld\",\"language\":\"dk\",\"definition\": \"curao\"}}">>,
 
   {ok,_StatusCode,_RespHeaders,ClientRef} = 
-    hackney:request(put,URL,ReqHeaders,PayLoad), 
+    hackney:request(post,URL,ReqHeaders,PayLoad), 
   {ok,Body}  = hackney:body(ClientRef),
+  ?DEBUG(Body),
   <<"{\"atomic\":\"ok\"}">> = Body,
  
   [Fuld]       = wc_backend:find_word(<<"fuld">>),
@@ -196,13 +197,14 @@ find_a_word_api_test(Config)->
   Payload    = << "{\"word\":{\"title\": \"pip\",\"definition\": \"pajarito\"}}" >>,
 
   {ok,_StatusCode,_RespHeaders,_ClientRef} = 
-    hackney:request(put,URL,ReqHeaders,Payload,[]), 
+    hackney:request(post,URL,ReqHeaders,Payload,[]), 
 
   URL2     = <<"localhost:8080/wc/words/pip">>,  
 
   {ok, _StatusCode2, _RespHeaders2,ClientRef2} =
     hackney:request(get,URL2,[], <<>>, []),
   {ok,Body} = hackney:body(ClientRef2),
+  ?DEBUG(Body),
   Word = wc_json:decode(Body),
 
   <<"pip">> = Word#wc_word.title,
@@ -233,7 +235,7 @@ edit_a_word_api_test(Config)->
   ReqHeader = [{<<"Content-Type">>,<<"application/json">>}],
   PayLoad = <<"{\"word\":\"bog\",\"changes\":{\"definition\":\"libro\",\"status\":\"active\",\"examples\":\"så skal vi læse en bog\"}}"/utf8>>,
   {ok,_StatusCode,_RespHeaders,ClientRef} =
-    hackney:request(post,URL,ReqHeader,PayLoad),
+    hackney:request(put,URL,ReqHeader,PayLoad),
 
   {ok,Body} = hackney:body(ClientRef),
 
@@ -241,7 +243,7 @@ edit_a_word_api_test(Config)->
   
   %try with a word that does not exist
   {ok,_StatusCode2,_RespHeaders2,ClientRef2} =
-    hackney:request(post,<<"localhost:8080/wc/words/bog">>,
+    hackney:request(put,<<"localhost:8080/wc/words/bog">>,
       [{<<"Content-Type">>,<<"application/json">>}],
      <<"{\"word\":\"boggy\",\"changes\":{
        \"definition\":\"librillo\",
