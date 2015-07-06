@@ -1,6 +1,6 @@
 WORD COLLECTOR
 ================
-[![Build Status](https://travis-ci.org/oscarfelipe/word_collector.svg?branch=api)](https://travis-ci.org/oscarfelipe/word_collector)
+[![Build Status](https://travis-ci.org/oscarftoro/word_collector.svg?branch=api)](https://travis-ci.org/oscarftoro/word_collector)
 
 Hola, 
 Word Collector (or WC or toilet) is a RESTful API that allows you to store words from foreign languages. 
