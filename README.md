@@ -53,7 +53,7 @@ example:
 
 
 ```bash
-curl -vX PUT http://localhost:8080/wc/words \
+curl -vX POST http://localhost:8080/wc/words \
 -H"Content-Type:application/json" \
 -d'{word: {"title": "hej","language":"dk", "definition": "hola" }}'
 ```
@@ -81,7 +81,7 @@ PUT /wc/words/word\_title with a payload:
 ```
 example:
 ```bash
-curl -vX POST http://localhost:8080/wc/words/kiks \
+curl -vX PUT http://localhost:8080/wc/words/kiks \
 -H"Content-Type:application/json" \
 -d'{"word": "kiks","changes": {"definition": "galleturris",
 "status" : "active","examples": "så skal vi spise kiks"}}'
