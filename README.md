@@ -24,7 +24,7 @@ Debugging the application
 
 Running tests
 -------------
-Since the project use erlang.mk, a simple ```make tests``` will do the job. There are Eunit and Common Tests included on this project.
+Since the project uses erlang.mk, a simple ```make tests``` will do the job. There are Eunit and Common Tests included on this project.
 
 When the tests are done, the results can easily be checked in the folder log. Open the index file and inspect what is wrong where. Common test mantain an history of your tests. Simply amazing. 
 
@@ -43,7 +43,7 @@ curl -vX GET http://localhost:8080/wc/words
 ### Add a word
 The word to be added has to be formated as a JSON object and has to convey the following order: title,language, definition.
 
-PUT /wc/words
+POST /wc/words
 
 *payload:*
 
@@ -69,7 +69,7 @@ curl -vX GET http://localhost:8080/wc/words/hej
 ```
 ### Edit or Update a Word
 
-POST /wc/words/word\_title with a payload:
+PUT /wc/words/word\_title with a payload:
 ```javascript
 {
     "word": "word title",
