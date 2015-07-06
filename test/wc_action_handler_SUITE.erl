@@ -164,6 +164,7 @@ all() ->
 %%CREATE
 add_a_word_api_test(Config) -> 
   URL        = <<"localhost:8080/wc/words">>,
+  %here the charset is not defined! 
   ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
   PayLoad    = <<"{\"word\":{\"title\": \"fuld\",\"language\":\"dk\",\"definition\": \"curao\"}}">>,
 
@@ -193,7 +194,7 @@ add_a_word_api_test(Config) ->
 find_a_word_api_test(Config)->
 
   URL        = <<"localhost:8080/wc/words">>,
-  ReqHeaders = [{<<"Content-Type">>,<<"application/json">>}], 
+  ReqHeaders = [{<<"Content-Type">>,<<"application/json;charset=UTF-8">>}], 
   Payload    = << "{\"word\":{\"title\": \"pip\",\"definition\": \"pajarito\"}}" >>,
 
   {ok,_StatusCode,_RespHeaders,_ClientRef} = 
@@ -232,7 +233,7 @@ delete_a_word_api_test(Config) ->
 edit_a_word_api_test(Config)->
   URL     = <<"localhost:8080/wc/words/bog">>,
   % URL2    = <<"localhost:8080/wc/words/guitar">>,
-  ReqHeader = [{<<"Content-Type">>,<<"application/json">>}],
+  ReqHeader = [{<<"Content-Type">>,<<"application/json;charset=UTF-8">>}],
   PayLoad = <<"{\"word\":\"bog\",\"changes\":{\"definition\":\"libro\",\"status\":\"active\",\"examples\":\"så skal vi læse en bog\"}}"/utf8>>,
   {ok,_StatusCode,_RespHeaders,ClientRef} =
     hackney:request(put,URL,ReqHeader,PayLoad),
@@ -244,7 +245,7 @@ edit_a_word_api_test(Config)->
   %try with a word that does not exist
   {ok,_StatusCode2,_RespHeaders2,ClientRef2} =
     hackney:request(put,<<"localhost:8080/wc/words/bog">>,
-      [{<<"Content-Type">>,<<"application/json">>}],
+      [{<<"Content-Type">>,<<"application/json;charset=UTF-8">>}],
      <<"{\"word\":\"boggy\",\"changes\":{
        \"definition\":\"librillo\",
        \"status\":\"active\",

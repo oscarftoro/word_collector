@@ -82,8 +82,9 @@ content_types_provided(Req, State) ->
 %%--------------------------------------------------------------
 
 content_types_accepted(Req, State) ->
-  ?DEBUG(Req),
-  {[{<<"application/json; charset=UTF-8">>, create_resource}],Req,State}.
+  ?DEBUG(Req), 
+  {[{<<"application/json;charset=UTF-8">>, create_resource},
+    {<<"application/json">>, create_resource}],Req,State}.
 
 %%--------------------------------------------------------------
 %% @doc
