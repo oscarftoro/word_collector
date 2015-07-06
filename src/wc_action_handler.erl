@@ -83,7 +83,7 @@ content_types_provided(Req, State) ->
 
 content_types_accepted(Req, State) ->
   ?DEBUG(Req),
-  {[{<<"application/json">>, create_resource}],Req,State}.
+  {[{<<"application/json; charset=UTF-8">>, create_resource}],Req,State}.
 
 %%--------------------------------------------------------------
 %% @doc
@@ -175,9 +175,7 @@ create_or_edit(<<"PUT">>,Req,State) ->
   Result = edit_resource(jiffy:decode(Body),Req,State),
   ?DEBUG(Result),
   Result.
-
-
-      
+    
 % GET ALL WORDS        
 get_resource([{what,<<"words">>}]) ->
   Words = wc_backend:get_all_words(),
