@@ -3,7 +3,7 @@ WORD COLLECTOR
 [![Build Status](https://travis-ci.org/oscarftoro/word_collector.svg?branch=api)](https://travis-ci.org/oscarftoro/word_collector)
 
 Hola, 
-Word Collector (or WC or toilet) is a RESTful API that allows you to store words from foreign languages. 
+Word Collector (or WC or toilet) is a HTTP-based interface that allows you to store words from foreign languages. 
 
 Features
 --------
@@ -29,7 +29,7 @@ Since the project uses erlang.mk, a simple ```make tests``` will do the job. The
 When the tests are done, the results can easily be checked in the folder log. Open the index file and inspect what is wrong where. Common test mantain an history of your tests. Simply amazing. 
 
 
-REST API
+HTTP API
 --------
 Retrieve all words 
 
